@@ -1,0 +1,642 @@
+<title>毎月DB同期設計書</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+:root{
+  --ground:#F7F8FB; --surface:#FFFFFF; --surface2:#EDF0F7; --surface3:#E4E9F4;
+  --ink:#171C26; --ink2:#49536A; --ink3:#78829B;
+  --rule:#DCE1EC; --rule2:#C6CEDF;
+  --accent:#2E4A8C; --accent-ink:#2E4A8C; --accent-soft:#E6ECFA;
+  --caution:#8A5A0B; --caution-soft:#FAF1DD; --caution-rule:#E3C68A;
+  --danger:#96302A; --danger-soft:#FBE8E6;
+  --sans:'IBM Plex Sans JP','Zen Kaku Gothic New',system-ui,sans-serif;
+  --body:'Zen Kaku Gothic New','IBM Plex Sans JP',system-ui,sans-serif;
+  --mono:'IBM Plex Mono','Zen Kaku Gothic New',ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0F1218; --surface:#161A22; --surface2:#1D2330; --surface3:#252D3D;
+  --ink:#E4E8F1; --ink2:#A9B2C6; --ink3:#78829B;
+  --rule:#28303F; --rule2:#39435A;
+  --accent:#93ABEA; --accent-ink:#A8BCF0; --accent-soft:#1B2436;
+  --caution:#E1B267; --caution-soft:#2A2417; --caution-rule:#5A4A22;
+  --danger:#E38B83; --danger-soft:#2E1C1A;
+}}
+:root[data-theme="dark"]{
+  --ground:#0F1218; --surface:#161A22; --surface2:#1D2330; --surface3:#252D3D;
+  --ink:#E4E8F1; --ink2:#A9B2C6; --ink3:#78829B;
+  --rule:#28303F; --rule2:#39435A;
+  --accent:#93ABEA; --accent-ink:#A8BCF0; --accent-soft:#1B2436;
+  --caution:#E1B267; --caution-soft:#2A2417; --caution-rule:#5A4A22;
+  --danger:#E38B83; --danger-soft:#2E1C1A;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+     font-family:var(--body);font-size:16px;line-height:1.85;
+     font-feature-settings:"palt" 1;-webkit-font-smoothing:antialiased}
+a{color:var(--accent-ink)}
+a:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+
+.shell{display:grid;grid-template-columns:280px minmax(0,1fr);gap:0;
+       max-width:1360px;margin:0 auto}
+
+/* ---- rail ---- */
+.rail{position:sticky;top:0;height:100vh;overflow-y:auto;padding:34px 22px 60px 34px;
+      border-right:1px solid var(--rule);background:var(--ground)}
+.rail__brand{font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.14em;
+             color:var(--ink3);text-transform:uppercase;margin-bottom:26px}
+.rail nav{display:flex;flex-direction:column;gap:1px}
+.rail a{display:flex;gap:9px;text-decoration:none;color:var(--ink2);
+        font-family:var(--sans);line-height:1.5;padding:5px 9px;border-radius:5px}
+.rail a:hover{background:var(--surface2);color:var(--ink)}
+.rail a.on{background:var(--accent-soft);color:var(--accent-ink);font-weight:600}
+.nav__n{font-family:var(--mono);font-size:11px;color:var(--ink3);
+        min-width:2.1em;padding-top:.15em;font-variant-numeric:tabular-nums}
+.rail a.on .nav__n{color:var(--accent-ink)}
+.nav__l2{font-size:13.5px;font-weight:600;margin-top:12px}
+.nav__l3{font-size:12.5px;padding-left:9px !important}
+
+/* ---- document ---- */
+.doc{padding:56px 46px 140px;max-width:960px}
+.masthead{border-bottom:2px solid var(--ink);padding-bottom:26px;margin-bottom:14px}
+.eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;
+         text-transform:uppercase;color:var(--accent-ink);margin:0 0 14px}
+h1{font-family:var(--sans);font-size:clamp(28px,3.6vw,40px);font-weight:700;
+   line-height:1.32;letter-spacing:-.01em;margin:0 0 14px;text-wrap:balance}
+.lede{font-size:15px;color:var(--ink2);margin:0;max-width:62ch}
+
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));
+       gap:1px;background:var(--rule);border:1px solid var(--rule);
+       margin:0 0 46px;border-top:none}
+.fact{background:var(--ground);padding:15px 17px}
+.fact dt{font-family:var(--sans);font-size:11px;letter-spacing:.06em;
+         color:var(--ink3);margin:0 0 5px}
+.fact dd{margin:0;font-family:var(--mono);font-size:13px;font-weight:500;
+         color:var(--ink);line-height:1.5}
+
+h2,h3,h4{font-family:var(--sans);letter-spacing:-.005em;text-wrap:balance;
+         scroll-margin-top:22px}
+h2{font-size:25px;font-weight:700;line-height:1.4;
+   margin:76px 0 22px;padding-top:22px;border-top:1px solid var(--rule2)}
+h3{font-size:18.5px;font-weight:600;line-height:1.5;margin:46px 0 14px}
+h4{font-size:15.5px;font-weight:600;color:var(--ink2);margin:32px 0 10px}
+.hn{font-family:var(--mono);font-weight:400;color:var(--accent-ink);
+    margin-right:.62em;font-variant-numeric:tabular-nums}
+h3 .hn{font-size:.88em}
+
+.badge{display:inline-block;vertical-align:.16em;margin-left:.7em;
+       font-family:var(--sans);font-size:10.5px;font-weight:600;letter-spacing:.07em;
+       padding:3px 8px;border-radius:2px;line-height:1.5}
+.badge--critical{background:var(--danger-soft);color:var(--danger);
+                 box-shadow:inset 0 0 0 1px currentColor}
+.badge--settled{background:var(--accent-soft);color:var(--accent-ink)}
+.badge--checked{background:var(--caution-soft);color:var(--caution)}
+
+p{margin:0 0 18px;max-width:70ch}
+strong{font-weight:700;color:var(--ink)}
+hr{border:none;border-top:1px solid var(--rule);margin:44px 0}
+
+ul,ol{margin:0 0 20px;padding-left:1.45em;max-width:70ch}
+li{margin-bottom:8px}
+li::marker{color:var(--ink3);font-family:var(--mono);font-size:.9em}
+ul.sub{margin:8px 0 4px;padding-left:1.2em}
+ul.checks{list-style:none;padding-left:0;max-width:74ch}
+ul.checks li{position:relative;padding-left:30px;margin-bottom:11px;
+             border-bottom:1px dotted var(--rule);padding-bottom:11px}
+ul.checks li::before{content:"";position:absolute;left:0;top:.52em;width:13px;height:13px;
+                     border:1.5px solid var(--rule2);border-radius:2px}
+
+code{font-family:var(--mono);font-size:.855em;background:var(--surface2);
+     padding:.14em .42em;border-radius:3px;color:var(--ink);
+     word-break:break-word;font-feature-settings:normal}
+.code{margin:0 0 24px;border:1px solid var(--rule);background:var(--surface);
+      border-left:2px solid var(--accent);overflow-x:auto}
+.code pre{margin:0;padding:17px 20px}
+.code code{background:none;padding:0;font-size:12.9px;line-height:1.72;
+           white-space:pre;color:var(--ink2)}
+
+.tw{margin:0 0 26px;overflow-x:auto;border:1px solid var(--rule)}
+table{border-collapse:collapse;width:100%;font-size:13.6px;
+      font-variant-numeric:tabular-nums;background:var(--surface)}
+th,td{text-align:left;vertical-align:top;padding:10px 14px;
+      border-bottom:1px solid var(--rule);line-height:1.68}
+th{font-family:var(--sans);font-weight:600;font-size:12.5px;color:var(--ink);
+   background:var(--surface2);white-space:nowrap;
+   border-bottom:1px solid var(--rule2);position:sticky;top:0}
+td{color:var(--ink2)}
+td strong{color:var(--ink)}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--surface2)}
+table code{background:var(--surface3);font-size:12px}
+
+.note{margin:0 0 24px;padding:15px 19px;background:var(--caution-soft);
+      border-left:2px solid var(--caution-rule);max-width:74ch}
+.note p{margin:0;font-size:14.2px;color:var(--ink2);max-width:none}
+.note strong{color:var(--caution)}
+.note code{background:rgba(0,0,0,.06)}
+
+.railtoggle{display:none}
+
+@media (max-width:1080px){
+  .shell{grid-template-columns:minmax(0,1fr)}
+  .rail{position:static;height:auto;border-right:none;
+        border-bottom:1px solid var(--rule);padding:22px 26px}
+  .railtoggle{display:block}
+  .rail nav{display:none;margin-top:16px;max-height:52vh;overflow-y:auto}
+  .rail[open] nav{display:flex}
+  .rail__brand{margin-bottom:0}
+  .doc{padding:34px 26px 100px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+</style>
+
+<div class="shell">
+  <details class="rail" open>
+    <summary class="rail__brand railtoggle">目次</summary>
+    <div class="rail__brand" aria-hidden="true">Contents</div>
+    <nav><a class="nav__l2" href="#s0"><span class="nav__n">0</span><span>確定した前提条件</span></a>
+<a class="nav__l3" href="#s1"><span class="nav__n">0-1</span><span>業務前提(ヒアリング確定分)</span></a>
+<a class="nav__l3" href="#s2"><span class="nav__n">0-2</span><span>ライセンス要件</span></a>
+<a class="nav__l3" href="#s3"><span class="nav__n">0-3</span><span>ローカルPC → クラウドの経路</span></a>
+<a class="nav__l3" href="#s4"><span class="nav__n">0-4</span><span>確認済み事項</span></a>
+<a class="nav__l3" href="#s5"><span class="nav__n">0-5</span><span>未確定・要確認事項</span></a>
+<a class="nav__l2" href="#s6"><span class="nav__n">1</span><span>Excel側に必要な改修</span></a>
+<a class="nav__l3" href="#s7"><span class="nav__n">1-1</span><span>明細行番は Office Script が出現順で自動採番する</span></a>
+<a class="nav__l3" href="#s8"><span class="nav__n">1-2</span><span>テーブル(ListObject)化</span></a>
+<a class="nav__l3" href="#s9"><span class="nav__n">1-3</span><span>コード系列の書式を「文字列」にする</span></a>
+<a class="nav__l3" href="#s10"><span class="nav__n">1-4</span><span>ファイル配置とファイル名規約</span></a>
+<a class="nav__l3" href="#s11"><span class="nav__n">1-5</span><span>半角カナ・日本語列名の扱い</span></a>
+<a class="nav__l2" href="#s12"><span class="nav__n">2</span><span>リクエスト予算の設計</span></a>
+<a class="nav__l3" href="#s13"><span class="nav__n">2-1</span><span>予算</span></a>
+<a class="nav__l3" href="#s14"><span class="nav__n">2-2</span><span>素直に作ると破綻する</span></a>
+<a class="nav__l3" href="#s15"><span class="nav__n">2-3</span><span>リクエストを最小化する技法</span></a>
+<a class="nav__l3" href="#s16"><span class="nav__n">2-4</span><span>結果として得られるリクエスト消費</span></a>
+<a class="nav__l2" href="#s17"><span class="nav__n">3</span><span>Dataverse テーブル設計</span></a>
+<a class="nav__l3" href="#s18"><span class="nav__n">3-1</span><span>テーブル一覧</span></a>
+<a class="nav__l3" href="#s19"><span class="nav__n">3-2</span><span>毎月DB明細 — 管理列</span></a>
+<a class="nav__l3" href="#s20"><span class="nav__n">3-3</span><span>毎月DB明細 — 業務列(59列)</span></a>
+<a class="nav__l3" href="#s21"><span class="nav__n">3-4</span><span>型選択の根拠(ここを間違えると後戻りできない)</span></a>
+<a class="nav__l3" href="#s22"><span class="nav__n">3-5</span><span>区分マスタと、追加リクエストゼロのルックアップ解決</span></a>
+<a class="nav__l3" href="#s23"><span class="nav__n">3-6</span><span>同期制御 / 同期エラー</span></a>
+<a class="nav__l3" href="#s24"><span class="nav__n">3-7</span><span>容量見積り</span></a>
+<a class="nav__l2" href="#s25"><span class="nav__n">4</span><span>Office Script(読み取り・正規化・ハッシュ生成)</span></a>
+<a class="nav__l3" href="#s26"><span>実装</span></a>
+<a class="nav__l3" href="#s27"><span>設計上の要点</span></a>
+<a class="nav__l3" href="#s28"><span>異常系で停止する条件</span></a>
+<a class="nav__l3" href="#s29"><span class="nav__n">4-1</span><span>Office Script の制約と対策</span></a>
+<a class="nav__l3" href="#s30"><span class="nav__n">4-2</span><span>Office Scripts が使えない場合のフォールバック</span></a>
+<a class="nav__l2" href="#s31"><span class="nav__n">5</span><span>フロー設計</span></a>
+<a class="nav__l3" href="#s32"><span class="nav__n">5-1</span><span>フロー① 最新月ファイル差分同期(メイン)</span></a>
+<a class="nav__l3" href="#s33"><span class="nav__n">5-2</span><span>フロー② 月次締め</span></a>
+<a class="nav__l3" href="#s34"><span class="nav__n">5-3</span><span>フロー③ 区分マスタ同期</span></a>
+<a class="nav__l3" href="#s35"><span class="nav__n">5-4</span><span>フロー④ 整合性検証(週次)</span></a>
+<a class="nav__l3" href="#s36"><span class="nav__n">5-5</span><span>エラー処理</span></a>
+<a class="nav__l2" href="#s37"><span class="nav__n">6</span><span>初期ロード(初回のみ例外を使う)</span></a>
+<a class="nav__l3" href="#s38"><span class="nav__n">6-1</span><span>手順</span></a>
+<a class="nav__l3" href="#s39"><span class="nav__n">6-2</span><span>前提4(入力はPower Automateのみ)を厳守する場合(参考)</span></a>
+<a class="nav__l2" href="#s40"><span class="nav__n">7</span><span>具体例(リクエスト消費のトレース)</span></a>
+<a class="nav__l3" href="#s41"><span>例1 — 最新月ファイルに新規10行を追加して保存</span></a>
+<a class="nav__l3" href="#s42"><span>例2 — 既存500行のうち3行の単価を修正して保存</span></a>
+<a class="nav__l3" href="#s43"><span>例3 — 500行を全入れ替え(前月分を削除して当月分を貼り付け)</span></a>
+<a class="nav__l2" href="#s44"><span class="nav__n">8</span><span>メリット / デメリット</span></a>
+<a class="nav__l3" href="#s45"><span>メリット</span></a>
+<a class="nav__l3" href="#s46"><span>デメリット</span></a>
+<a class="nav__l2" href="#s47"><span class="nav__n">9</span><span>見落としやすい弱点(率直な指摘)</span></a>
+<a class="nav__l3" href="#s48"><span class="nav__n">1</span><span>ライセンス未決裁のまま設計を進めるリスク — 最大の落とし穴</span></a>
+<a class="nav__l3" href="#s49"><span class="nav__n">2</span><span>物理削除 + Excelの誤操作 = 復旧不能</span></a>
+<a class="nav__l3" href="#s50"><span class="nav__n">3</span><span>サービスアカウントに Premium ライセンスが要る</span></a>
+<a class="nav__l3" href="#s51"><span class="nav__n">4</span><span>Dataverse サービス保護制限と並列度 — 重要度が上がった</span></a>
+<a class="nav__l3" href="#s52"><span class="nav__n">5</span><span>容量がテナント共有プールになった</span></a>
+<a class="nav__l3" href="#s53"><span class="nav__n">6</span><span>区分マスタを7列で共有することの副作用</span></a>
+<a class="nav__l3" href="#s54"><span class="nav__n">7</span><span>初期ロードと定常同期でハッシュ計算が食い違う罠</span></a>
+<a class="nav__l3" href="#s55"><span class="nav__n">8</span><span>タイムゾーン設定は後から変えられない</span></a>
+<a class="nav__l3" href="#s56"><span class="nav__n">9</span><span>ポーリングトリガー自体がリクエストを消費する</span></a>
+<a class="nav__l3" href="#s57"><span class="nav__n">10</span><span>Excel Online コネクタのファイルサイズ上限</span></a>
+<a class="nav__l3" href="#s58"><span class="nav__n">11</span><span>200ファイル構造そのものが根本的な負債</span></a>
+<a class="nav__l2" href="#s59"><span class="nav__n">10</span><span>代替案</span></a>
+<a class="nav__l3" href="#s60"><span>代替案A — SharePoint リストを本体にする</span></a>
+<a class="nav__l3" href="#s61"><span>代替案B — Dataverse化せず、Power Query で参照する</span></a>
+<a class="nav__l3" href="#s62"><span>代替案C — ローカル Access に統合DBを作る</span></a>
+<a class="nav__l3" href="#s63"><span>代替案D — Excel側を集約する(代替案というより、やるべき前処理)</span></a>
+<a class="nav__l2" href="#s64"><span class="nav__n">11</span><span>今日から実践する手順</span></a>
+<a class="nav__l3" href="#s65"><span>Day 0(今日 / 2〜3時間)</span></a>
+<a class="nav__l3" href="#s66"><span>Day 1(半日)</span></a>
+<a class="nav__l3" href="#s67"><span>Day 2(1日)</span></a>
+<a class="nav__l3" href="#s68"><span>Day 3(1日)</span></a>
+<a class="nav__l3" href="#s69"><span>Day 4〜5</span></a>
+<a class="nav__l3" href="#s70"><span>Day 6〜12(並行運用期間)</span></a>
+<a class="nav__l2" href="#s71"><span class="nav__n">12</span><span>実装チェックリスト(重要度順)</span></a></nav>
+  </details>
+
+  <main class="doc">
+    <header class="masthead">
+      <p class="eyebrow">Design specification</p>
+      <h1>毎月DB &#8644; Dataverse 同期設計書</h1>
+      <p class="lede">ローカルPC(Windows&nbsp;11)上の Excel「毎月DB」を、Microsoft&nbsp;365 Business Standard with Copilot と Power&nbsp;Automate&nbsp;Premium で Dataverse と同期する。Dataverse&nbsp;for&nbsp;Teams の廃止決定に伴う改訂版。</p>
+    </header>
+    <dl class="facts"><div class="fact"><dt>対象ライセンス</dt><dd>Business Standard with Copilot + Power Automate Premium</dd></div>
+<div class="fact"><dt>1日のリクエスト上限</dt><dd>40,000 件 / ユーザー</dd></div>
+<div class="fact"><dt>Dataverse 容量</dt><dd>テナント共有プール</dd></div>
+<div class="fact"><dt>初期投入行数</dt><dd>約 100,000 行</dd></div></dl>
+<h2 id="s0"><span class="hn">0</span>確定した前提条件</h2>
+<h3 id="s1"><span class="hn">0-1</span>業務前提(ヒアリング確定分)</h3>
+<div class="tw"><table><thead><tr><th>項目</th><th>確定内容</th><th>設計への影響</th></tr></thead><tbody><tr><td>行の一意キー</td><td><strong>受注No + 手配票No + sub_no</strong></td><td>明細行番は業務システムから出力不可 → Office Script が出現順で自動採番(1-1)</td></tr><tr><td>更新されるファイル</td><td><strong>最新月の1ファイルのみ</strong>(過去分は確定・不変)</td><td>差分スキャン対象が1ファイル=最大500行。リクエスト消費が桁違いに軽い</td></tr><tr><td>初期ロード</td><td><strong>初回のみ例外</strong>でインポート機能を使用</td><td>100,000行を数時間で投入。以降の入力は全てPower Automate</td></tr><tr><td>削除の扱い</td><td><strong>物理削除</strong></td><td>Excelの誤操作が即データ消失 → サーキットブレーカーが必須</td></tr></tbody></table></div>
+<h3 id="s2"><span class="hn">0-2</span>ライセンス要件 <span class="badge badge--critical">前提が変わる最重要事項</span></h3>
+<p>Dataverse for Teams は<strong>廃止が決定している</strong>。</p>
+<div class="tw"><table><thead><tr><th>段階</th><th>日付</th></tr></thead><tbody><tr><td>新規環境の作成が不可に</td><td>2026-11-15</td></tr><tr><td>未移行環境の停止</td><td>2027-09-15</td></tr><tr><td>未移行環境の撤去(アプリ・フロー・データごと削除)</td><td>2027-10-30</td></tr></tbody></table></div>
+<p>本格版 Dataverse への移行は必須。ただし<strong>移行するとライセンス要件が根本的に変わる</strong>。</p>
+<h4 id="s3">Microsoft 365 Business Standard with Copilot では本格版 Dataverse は使えない</h4>
+<p>Microsoft の一次情報で確認した事実。</p>
+<div class="tw"><table><thead><tr><th>確認事項</th><th>公式ドキュメントの記述</th></tr></thead><tbody><tr><td>Power Platform リクエスト上限</td><td>「Microsoft 365 apps with Power Platform access」= <strong>6,000/24h</strong>。割り当て表に <strong>Copilot の行は存在しない</strong>ため、Copilot を追加しても増えない</td></tr><tr><td>Dataverse 利用の前提</td><td>「<strong>Dataverse capacity is a prerequisite</strong> for Power Apps and Power Automate workflows to use Dataverse」</td></tr><tr><td>容量の付与元</td><td>「Every tenant with <strong>a Power Apps license</strong> gets default capacity」— Microsoft 365 ライセンスではなく Power Platform ライセンスが付与元</td></tr><tr><td>Teams 環境からの移行</td><td>「For any standalone Power Apps or <strong>Power Automate usage, which also includes Dataverse API access</strong>, the Dataverse for Teams environment <strong>needs to upgrade to Dataverse</strong>」</td></tr></tbody></table></div>
+<p>Dataverse コネクタは<strong>プレミアムコネクタ</strong>であり、Dataverse for Teams 環境内に限って付帯ライセンスで使えていた。 本格版 Dataverse に移ると、この例外から外れる。</p>
+<p>→ <strong>必要なのは Copilot ではなく <a href="https://www.microsoft.com/power-platform/products/power-automate/pricing">Power Automate Premium</a>(約 $15/ユーザー/月)。</strong></p>
+<p>これは<strong>前提3(Microsoft 365 以外の有償サービスは採用不可)に抵触する</strong>。 この1点の決裁がプロジェクトの可否を決める。</p>
+<h4 id="s3">ライセンス別の制約比較</h4>
+<div class="tw"><table><thead><tr><th>項目</th><th>Power Automate Premium あり</th><th>Business Standard + Copilot のみ</th></tr></thead><tbody><tr><td>本格版 Dataverse</td><td>使える</td><td><strong>使えない</strong></td></tr><tr><td>Power Platform リクエスト</td><td><strong>40,000</strong> / 24h / ユーザー</td><td>6,000 / 24h / ユーザー</td></tr><tr><td>Dataverse 容量</td><td>テナント既定容量 + 250 MB/ライセンス</td><td><strong>容量なし</strong></td></tr><tr><td>プレミアムコネクタ(HTTP / SQL Server / Azure系)</td><td>使える</td><td>不可</td></tr><tr><td>オンプレミスデータゲートウェイ</td><td>使える</td><td>不可</td></tr><tr><td>プラグイン / カスタムAPI</td><td>使える</td><td>不可</td></tr><tr><td>列レベルセキュリティ</td><td>使える</td><td>—</td></tr><tr><td>バックアップ / 復元 / 環境コピー</td><td>使える</td><td>—</td></tr><tr><td>ポーリングトリガー最小間隔</td><td>1分</td><td>5分</td></tr></tbody></table></div>
+<p><strong>本書は Power Automate Premium を取得した前提で以降を記述する。</strong> 取得できない場合は 10章の代替案 A(SharePoint リスト)または B(Power Query 参照)へ切り替えること。 どちらも Business Standard の範囲に収まる。</p>
+<h4 id="s3">変わらない制約</h4>
+<p>ライセンスを上げても以下は効き続ける。設計から外してはいけない。</p>
+<div class="tw"><table><thead><tr><th>制約</th><th>値</th><th>影響</th></tr></thead><tbody><tr><td>Dataverse サービス保護制限</td><td>5分あたり6,000リクエスト / 同時接続約20</td><td><strong>ライセンスと無関係</strong>。並列度の上限を決める</td></tr><tr><td>Excel Online (Business)</td><td>テーブル(ListObject)のみ読める / ファイルサイズ上限 約25MB / 「行を一覧表示」は既定256件</td><td>Excel側の改修が必須</td></tr><tr><td>リクエストの数え方</td><td>「トリガーのポーリング」+「アクションの実行回数」。ループ内は繰り返し回数分</td><td><code>Apply to each</code> 500回 = 500リクエスト</td></tr></tbody></table></div>
+<h3 id="s3"><span class="hn">0-3</span>ローカルPC → クラウドの経路</h3>
+<p>Power Automate の<strong>クラウドフローはローカルファイルを直接読めない</strong>。</p>
+<p>Power Automate Premium を取得すると<strong>オンプレミスデータゲートウェイ + File System コネクタ</strong>が 使えるようになり、ローカルファイルを直接読む選択肢が増える。ただし本設計では採用しない。</p>
+<div class="tw"><table><thead><tr><th>方式</th><th>評価</th></tr></thead><tbody><tr><td><strong>OneDrive 同期クライアント → SharePoint</strong>(採用)</td><td>PCがオフラインでも、同期済みのファイルをクラウド側が常に保持している。Excel Online コネクタと Office Script がそのまま使える</td></tr><tr><td>オンプレミスデータゲートウェイ + File System</td><td><strong>PCが起動しゲートウェイが常駐していないと同期が止まる</strong>。さらに File System コネクタはバイト列を返すだけで、Excel のテーブルを読むには別途処理が必要。利点が無い</td></tr></tbody></table></div>
+<p>→ <strong>OneDrive 同期クライアント経由を採用する</strong>(Business Standard に標準で含まれる)。</p>
+<div class="code"><pre><code>[ローカルPC C:\...\毎月DB\]  ←→ OneDrive同期クライアント ←→ [SharePoint ドキュメントライブラリ]</code></pre></div>
+<p>SharePoint チームサイトのライブラリを同期する構成を推奨(個人のOneDriveではなく)。 理由: 所有者が異動しても消えない / チーム全員がアクセスできる / 権限管理が揃う。</p>
+<h3 id="s4"><span class="hn">0-4</span>確認済み事項</h3>
+<div class="tw"><table><thead><tr><th>項目</th><th>確認結果</th><th>設計への反映</th></tr></thead><tbody><tr><td>区分表(5行2列)が7つの区分列すべてを賄えるか</td><td><strong>賄える。マスタ1本で足りる</strong></td><td>区分マスタの代替キーは <code>区分コード</code> 単独。区分種別は不要(3-5)</td></tr><tr><td><code>手配票No</code> に空欄の行があるか</td><td><strong>存在しない</strong></td><td>スクリプトの空欄チェックは想定内の分岐ではなく、事故検知用の安全網として機能する</td></tr></tbody></table></div>
+<h3 id="s5"><span class="hn">0-5</span>未確定・要確認事項</h3>
+<ol><li>最新月ファイルの切り替えタイミング(締め日)。月初何日まで前月ファイルを更新するか。</li><li><code>受注数</code> <code>箱数</code> <code>入数</code> に小数が入るか(整数型 vs 10進数型の判断)。</li><li>7つの区分列に<strong>空欄</strong>が入りうるか。入る場合は 3-5 の「未設定」行の追加が必要。</li></ol>
+<hr>
+<h2 id="s6"><span class="hn">1</span>Excel側に必要な改修 <span class="badge badge--critical">最重要</span></h2>
+<p><strong>ここを固めないと以降のすべてが成立しない。</strong> 順に重要。</p>
+<h3 id="s7"><span class="hn">1-1</span>明細行番は Office Script が出現順で自動採番する <span class="badge badge--settled">方針確定</span></h3>
+<p>現行59列に、1伝票内の明細を識別する列が無い。業務システムからの出力も不可であることが確認された。 このため <strong>Excel には列を追加せず、Office Script が読み取り時に採番する</strong>。</p>
+<div class="code"><pre><code>受注No | 手配票No | sub_no | sync_key
+13524  | R08-0234 | 01     | 13524R08-023401
+13524  | R08-0234 | 02     | 13524R08-023402
+13524  | R08-0235 | 01     | 13524R08-023501   ← 手配票No ごとに独立採番
+13600  | R08-0234 | 01     | 13600R08-023401</code></pre></div>
+<p>採番は「ファイルの上から出てきた順」。実装は <a href="./sync-read-script.ts"><code>sync-read-script.ts</code></a> の <code>main()</code> 内 <code>counter</code> を参照。</p>
+<p><strong>この方式が成立する前提(すべて確認済み)</strong></p>
+<div class="tw"><table><thead><tr><th>前提</th><th>成立しないと何が起きるか</th></tr></thead><tbody><tr><td>ファイルの行順が変わらない</td><td>並べ替えると sub_no が入れ替わり、内容が同じでも全行が更新扱いになる(最大500更新=514リクエスト)</td></tr><tr><td>同一の受注No が複数の月ファイルに出現しない</td><td>同期キーが月をまたいで衝突する。ただし代替キーの一意制約で「新しい行の追加」が失敗するため、無言のデータ破壊にはならず検知できる</td></tr><tr><td>明細数が99以下</td><td>桁あふれ。スクリプトが例外で停止する(<code>MAX_LINES_PER_GROUP</code>)</td></tr></tbody></table></div>
+<p><strong>残る注意点</strong>: 行がグループの途中に挿入されると、それ以降の sub_no がズレる (末尾への追加なら影響なし)。前提上は発生しないが、万一発生した場合は 最終状態は正しくなるものの delete + create が走り、Dataverse 行の <code>createdon</code> が失われる。 週次の整合性検証フロー(5-4)で削除件数を監視すること。</p>
+<p><strong>将来この前提が崩れた場合の対処</strong>: Office Script は書き込みも可能なため、 採番結果を Excel の列に書き戻して永続化すれば、行順・挿入の双方から独立した 真に安定したキーになる。10行程度の追加で実装できる。</p>
+<h3 id="s8"><span class="hn">1-2</span>テーブル(ListObject)化</h3>
+<p>Excel Online (Business) コネクタは<strong>セル範囲を読めない。テーブルだけ</strong>を読む。</p>
+<ul><li>全ファイルで<strong>同じテーブル名</strong>にする(例: <code>T_DB</code>)。ファイルごとに名前が違うとフローが分岐地獄になる</li><li>テーブル名を後から変えると全フローが即死する。命名は最初に固定する</li><li>ヘッダー行は1行のみ。結合セル・空列・重複列名は不可</li></ul>
+<h3 id="s9"><span class="hn">1-3</span>コード系列の書式を「文字列」にする</h3>
+<p><code>受注No</code> <strong><code>手配票No</code></strong> <code>商品コード</code> <code>得意先コード</code> <code>担当者コード</code> <code>部門コード</code> <code>直送先コード</code> <code>見積No</code> <code>番船</code></p>
+<p>数値書式のままだと <code>0001</code> → <code>1</code> になり、Dataverse側のキーが壊れる。 <strong><code>受注No</code> と <code>手配票No</code> は同期キーの構成要素</strong>なので、ここが崩れると同期そのものが破綻する。 既に壊れている過去データがあるなら、初期ロード前に一括修正する。</p>
+<h3 id="s10"><span class="hn">1-4</span>ファイル配置とファイル名規約</h3>
+<div class="code"><pre><code>SharePoint: /毎月DB/
+    current/  毎月DB_2026-08.xlsx     ← 最新月(同期対象)
+    archive/  毎月DB_2026-07.xlsx     ← 確定済み(同期対象外)
+              毎月DB_2026-06.xlsx
+              ... (200ファイル)
+    master/   区分表.xlsx</code></pre></div>
+<ul><li><code>current/</code> に置かれた1ファイルだけを差分同期する。これで<strong>スキャン対象が常に最大500行</strong>に固定される</li><li>月次締めフローが <code>current/</code> → <code>archive/</code> へ移動する</li><li>OneDriveの一時ファイル <code>~$*.xlsx</code> と競合コピー <code>*-.xlsx</code> はトリガー条件で除外する</li></ul>
+<h3 id="s11"><span class="hn">1-5</span>半角カナ・日本語列名の扱い</h3>
+<p><code>ｻｲｽﾞ</code> <code>ﾌﾟﾛｼﾞｪｸﾄ名コード</code> <code>ﾌﾟﾛｼﾞｪｸﾄ名名</code> は半角カナ。JSONのキーとしてそのまま流れる。 Power Automate の式で <code>item()?['ｻｲｽﾞ']</code> と書けば動作はするが、</p>
+<ul><li>全角/半角のゆらぎ(<code>ｻｲｽﾞ</code> vs <code>サイズ</code>)で無言で null になる</li><li>式のコピペ時に文字化けする</li><li>60個の式を目視でレビューできない</li></ul>
+<p>→ <strong>Office Script の読み取り時点で ASCII 論理名へ正規化する</strong>(後述)。 Excel側の列名は現状のまま変えなくてよい。</p>
+<hr>
+<h2 id="s12"><span class="hn">2</span>リクエスト予算の設計 <span class="badge badge--critical">最重要</span></h2>
+<h3 id="s13"><span class="hn">2-1</span>予算</h3>
+<div class="tw"><table><thead><tr><th>項目</th><th>件数/日</th></tr></thead><tbody><tr><td>割り当て(Power Automate Premium)</td><td>40,000</td></tr><tr><td>トリガーポーリング(15分間隔 × 1フロー)</td><td>96</td></tr><tr><td>トリガーポーリング(月次締め・区分表・検証フロー)</td><td>約 30</td></tr><tr><td><strong>同期処理に使える実質予算</strong></td><td><strong>約 39,800</strong></td></tr></tbody></table></div>
+<p>Dataverse for Teams 時代の 6,000 件から 6.6 倍になった。ただし<strong>以降の節で述べる技法1〜4はそのまま残す</strong>。 余裕ができたから雑に作ってよい、という話にはならない。理由は3つ。</p>
+<ol><li><strong>Dataverse のサービス保護制限(5分あたり6,000)はライセンスと無関係に効く。</strong> 結局ループは絞る必要がある</li><li><strong>実変更量に比例する設計のほうが、障害時の復旧と原因特定が速い。</strong> 500行保存して3行しか書かない設計なら、ログに出る書き込みが常に「実際に起きた変更」と一致する</li><li><strong>Premium を手放す判断が将来あっても、設計を作り直さずに済む</strong></li></ol>
+<h3 id="s14"><span class="hn">2-2</span>素直に作ると破綻する</h3>
+<p>500行を <code>Apply to each</code> で回し、中で「Dataverseから行を検索」→「条件分岐」→「作成 or 更新」とすると、 1行あたり3〜5リクエスト → <strong>500行で1,500〜2,500件</strong>。さらに区分列7本をルックアップで解決すると <strong>+3,500件/500行</strong>。 40,000 の予算なら一見収まるが、<strong>Dataverse のサービス保護制限(5分あたり6,000)に先にぶつかって 429 が多発する</strong>。 リクエスト予算ではなくスループットの問題として、ループは絞る必要がある。</p>
+<h3 id="s15"><span class="hn">2-3</span>リクエストを最小化する技法</h3>
+<p>これが本設計の核心。<strong>「ループの中に置くDataverseアクションを1個だけにする」</strong>ことが目標。 技法1〜4は Premium の有無にかかわらず有効で、代替案A(SharePoint リスト)にもそのまま流用できる。</p>
+<h4 id="s16">技法1: 配列操作アクションは件数に関係なく1リクエスト</h4>
+<p><code>アイテムの選択(Select)</code> <code>配列のフィルター処理(Filter array)</code> <code>作成(Compose)</code> <code>結合(Join)</code> は、 配列が500件でも<strong>1回の実行で1リクエスト</strong>。差分計算をすべてこれで行う。</p>
+<h4 id="s16">技法2: JSONオブジェクトを辞書として使い、O(1)ルックアップを実現</h4>
+<p>Power Automate の式には <code>filter()</code> が無い。そのため「このキーに対応するDataverseのGUIDは?」を ループ内で引こうとすると <code>Filter array</code> を回すことになり <strong>+1リクエスト/行</strong>。</p>
+<p>これを回避する。Dataverseから取得した配列を、キー→値の<strong>JSONオブジェクト(辞書)</strong>に変換する。</p>
+<div class="code"><pre><code>[1] アイテムの選択 「Select_GUID」
+    差し込み元: outputs('Dataverse行の一覧')?['body/value']
+    マップ(テキストモード):
+      concat('"', item()?['crfff_sync_key'], '":"', item()?['crfff_meisaiid'], '"')
+
+[2] 作成 「GUID辞書」
+    json(concat('{', join(body('Select_GUID'), ','), '}'))
+
+[3] 参照(ループ内、追加リクエストゼロ)
+    outputs('GUID辞書')?[items('更新ループ')?['sync_key']]</code></pre></div>
+<p>3アクション(=3リクエスト)で500件分の辞書ができる。同じ要領で <code>HASH辞書</code> <code>EXCELキー辞書</code> を作る。</p>
+<aside class="note"><p>キーに <code>"</code> や <code>\</code> が含まれると JSON が壊れる。<code>sync_key</code> は Office Script 側で <code>[^0-9A-Za-z\-_]</code> を除去してサニタイズしておく。</p></aside>
+<h4 id="s16">技法3: 差分を「新規/更新/削除」の3配列に事前分割する</h4>
+<p>ループ内に条件分岐を置くと、分岐アクション自体が1リクエスト/行。 分割を <code>Filter array</code> 3個(=3リクエスト)で済ませ、ループ内はDataverseアクション1個だけにする。</p>
+<div class="code"><pre><code>新規 = Filter(Excel行, @equals(outputs('GUID辞書')?[item()?['sync_key']], null))
+
+更新 = Filter(Excel行, @and(
+          not(equals(outputs('GUID辞書')?[item()?['sync_key']], null)),
+          not(equals(outputs('HASH辞書')?[item()?['sync_key']], item()?['row_hash']))))
+
+削除 = Filter(Dataverse行, @equals(outputs('EXCELキー辞書')?[item()?['crfff_sync_key']], null))</code></pre></div>
+<h4 id="s16">技法4: 行ハッシュで「実際に変わった行」だけ書く</h4>
+<p>Excelの保存操作は全行を等しく「更新されたかもしれない行」にしてしまう。 59列を連結したハッシュを行ごとに持ち、Dataverse側の値と一致する行は<strong>一切書かない</strong>。</p>
+<p>Power Automate の式には <code>sha256()</code> などのハッシュ関数が無い。 連結文字列をそのまま保存する手もあるが、<code>備考</code> が長いと数千文字になり容量を食う。</p>
+<p>→ <strong>Office Script 内で FNV-1a を計算し、16桁の16進文字列にする</strong>(後述)。</p>
+<h4 id="s16">技法5: OData <code>$batch</code> で書き込みを一括化する <span class="badge badge--settled">Premium で新たに可能</span></h4>
+<p>Power Automate Premium では <strong>HTTP with Microsoft Entra ID</strong> コネクタが使える。 Dataverse Web API の <code>$batch</code> エンドポイントに複数の操作をまとめて送れる。</p>
+<div class="code"><pre><code>POST https://&lt;org&gt;.crm7.dynamics.com/api/data/v9.2/$batch
+Content-Type: multipart/mixed; boundary=batch_sync
+
+--batch_sync
+Content-Type: multipart/mixed; boundary=changeset_1
+
+--changeset_1
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST /api/data/v9.2/crfff_meisais HTTP/1.1
+Content-Type: application/json
+
+{"crfff_sync_key":"13524R08-023401", "crfff_order_no":"13524", ...}
+--changeset_1
+  (以下、操作を繰り返す)
+--changeset_1--
+--batch_sync--</code></pre></div>
+<p>Power Platform リクエストとしては <strong>HTTP アクション1回 = 1件</strong>。 500行の書き込みが <strong>500リクエスト → 数リクエスト</strong>になる。</p>
+<p><strong>ただし、最初からこれを使うことは推奨しない。</strong> 理由は3つ。</p>
+<ol><li><strong>サービス保護制限はバッチの中の操作数で評価される。</strong> 1バッチあたり100〜200操作に抑える必要があり、 「1リクエストで何でも入る」わけではない</li><li><strong>changeset 内はトランザクション。</strong> 1件失敗すると全体がロールバックするため、 どの行が原因かの特定が難しくなる。500行のうち1行だけ日付が壊れていた、という状況で切り分けできない</li><li><strong>JSON と multipart の組み立てが複雑</strong>で、フローの可読性が大きく落ちる</li></ol>
+<p>→ <strong>初期ロードや月次の全入替のような大量書き込み専用の手段として持っておく。</strong> 日常の数件〜数十件の更新は、素直な Dataverse コネクタのほうが運用しやすい。 まず技法1〜4だけで運用を開始し、実測して必要になってから導入すること。</p>
+<h3 id="s16"><span class="hn">2-4</span>結果として得られるリクエスト消費</h3>
+<p>固定オーバーヘッドは <strong>1同期あたり14リクエスト</strong>。</p>
+<div class="tw"><table><thead><tr><th>ステップ</th><th>リクエスト</th></tr></thead><tbody><tr><td>同期制御テーブルの取得</td><td>1</td></tr><tr><td>Excel スクリプトの実行</td><td>1</td></tr><tr><td>Dataverse 行の一覧(500行、select指定)</td><td>1</td></tr><tr><td>アイテムの選択 × 3</td><td>3</td></tr><tr><td>作成(辞書) × 3</td><td>3</td></tr><tr><td>配列のフィルター処理 × 3</td><td>3</td></tr><tr><td>削除件数チェック(条件)</td><td>1</td></tr><tr><td>同期制御の更新</td><td>1</td></tr><tr><td><strong>小計</strong></td><td><strong>14</strong></td></tr><tr><td>新規N件 + 更新M件 + 削除K件</td><td>N + M + K</td></tr></tbody></table></div>
+<p><strong>合計 = 14 + (実際に変わった行数)</strong> — これが理論最小値。</p>
+<hr>
+<h2 id="s17"><span class="hn">3</span>Dataverse テーブル設計</h2>
+<h3 id="s18"><span class="hn">3-1</span>テーブル一覧</h3>
+<div class="tw"><table><thead><tr><th>テーブル</th><th>論理名</th><th>用途</th><th>想定行数</th></tr></thead><tbody><tr><td>毎月DB明細</td><td><code>crfff_meisai</code></td><td>本体</td><td>100,000 → +6,000/年</td></tr><tr><td>区分マスタ</td><td><code>crfff_kubun</code></td><td>区分表(5行2列)</td><td>5</td></tr><tr><td>同期制御</td><td><code>crfff_synccontrol</code></td><td>ファイル単位の同期状態</td><td>201</td></tr><tr><td>同期エラー</td><td><code>crfff_syncerror</code></td><td>失敗行の記録</td><td>変動</td></tr></tbody></table></div>
+<aside class="note"><p><code>crfff_</code> は発行者プレフィックスの仮置き。本格版 Dataverse では<strong>ソリューションの発行者を自分で定義できる</strong>ため、 <code>nlm_</code> のような意味のある接頭辞を最初に決めること。後から変更すると全列の再作成になる。</p></aside>
+<h3 id="s19"><span class="hn">3-2</span>毎月DB明細 — 管理列</h3>
+<div class="tw"><table><thead><tr><th>表示名</th><th>論理名</th><th>型</th><th>備考</th></tr></thead><tbody><tr><td>同期キー</td><td><code>crfff_sync_key</code></td><td>テキスト(100)</td><td><strong>主名前列 かつ 代替キー</strong>。<code>受注No + 手配票No + sub_no(2桁ゼロ埋め)</code> を区切り無しで連結</td></tr><tr><td>受注No</td><td><code>crfff_order_no</code></td><td>テキスト(30)</td><td>キー構成要素</td></tr><tr><td>手配票No</td><td><code>crfff_RNo</code></td><td>テキスト(30)</td><td>キー構成要素。旧「摘要」列。<strong>論理名は自動的に小文字化され <code>crfff_rno</code> になる</strong>(3-4参照)</td></tr><tr><td>明細枝番</td><td><code>crfff_sub_no</code></td><td>整数</td><td>キー構成要素。受注No + 手配票No 単位の通し番号</td></tr><tr><td>ソースファイル</td><td><code>crfff_source_file</code></td><td>テキスト(100)</td><td><code>毎月DB_2026-08.xlsx</code>。<strong>この列に検索インデックスを付ける</strong></td></tr><tr><td>行ハッシュ</td><td><code>crfff_row_hash</code></td><td>テキスト(32)</td><td>FNV-1a 16桁hex</td></tr><tr><td>最終同期日時</td><td><code>crfff_last_synced_on</code></td><td>日付と時刻</td><td>—</td></tr></tbody></table></div>
+<h3 id="s20"><span class="hn">3-3</span>毎月DB明細 — 業務列(59列)</h3>
+<div class="tw"><table><thead><tr><th>#</th><th>Excel列名</th><th>論理名</th><th>型</th><th>桁/精度</th></tr></thead><tbody><tr><td>1</td><td>ｻｲｽﾞ</td><td><code>crfff_size</code></td><td>テキスト</td><td>50</td></tr><tr><td>2</td><td>データ区分</td><td><code>crfff_data_kubun</code></td><td>ルックアップ(区分マスタ)</td><td>—</td></tr><tr><td>3</td><td>ﾌﾟﾛｼﾞｪｸﾄ名コード</td><td><code>crfff_project_code</code></td><td>テキスト</td><td>30</td></tr><tr><td>4</td><td>外税額</td><td><code>crfff_tax_excl_amount</code></td><td>10進数</td><td>2</td></tr><tr><td>5</td><td>規格・型番</td><td><code>crfff_spec_model</code></td><td>テキスト</td><td>100</td></tr><tr><td>6</td><td>原価</td><td><code>crfff_cost</code></td><td>10進数</td><td>2</td></tr><tr><td>7</td><td>原価税込区分</td><td><code>crfff_cost_taxincl_kubun</code></td><td>ルックアップ</td><td>—</td></tr><tr><td>8</td><td>原価税率</td><td><code>crfff_cost_tax_rate</code></td><td>10進数</td><td>3</td></tr><tr><td>9</td><td>受注No</td><td><code>crfff_order_no</code></td><td>テキスト</td><td>30</td></tr><tr><td>10</td><td>受注金額</td><td><code>crfff_order_amount</code></td><td>10進数</td><td>2</td></tr><tr><td>11</td><td>受注数</td><td><code>crfff_order_qty</code></td><td>10進数</td><td>3</td></tr><tr><td>12</td><td>受注日</td><td><code>crfff_order_date</code></td><td><strong>日付のみ / タイムゾーン非依存</strong></td><td>—</td></tr><tr><td>13</td><td>商品コード</td><td><code>crfff_item_code</code></td><td>テキスト</td><td>30</td></tr><tr><td>14</td><td>商品項目１</td><td><code>crfff_item_attr1</code></td><td>テキスト</td><td>50</td></tr><tr><td>15</td><td>商品項目２</td><td><code>crfff_item_attr2</code></td><td>テキスト</td><td>50</td></tr><tr><td>16</td><td>商品項目３</td><td><code>crfff_item_attr3</code></td><td>テキスト</td><td>50</td></tr><tr><td>17</td><td>商品名</td><td><code>crfff_item_name</code></td><td>テキスト</td><td>100</td></tr><tr><td>18</td><td>商品名２</td><td><code>crfff_item_name2</code></td><td>テキスト</td><td>100</td></tr><tr><td>19</td><td>色</td><td><code>crfff_color</code></td><td>テキスト</td><td>30</td></tr><tr><td>20</td><td>税込区分</td><td><code>crfff_taxincl_kubun</code></td><td>ルックアップ</td><td>—</td></tr><tr><td>21</td><td>税率</td><td><code>crfff_tax_rate</code></td><td>10進数</td><td>3</td></tr><tr><td>22</td><td>粗利益</td><td><code>crfff_gross_profit</code></td><td>10進数</td><td>2</td></tr><tr><td>23</td><td>単位</td><td><code>crfff_unit</code></td><td>テキスト</td><td>20</td></tr><tr><td>24</td><td>単位区分</td><td><code>crfff_unit_kubun</code></td><td>ルックアップ</td><td>—</td></tr><tr><td>25</td><td>単価</td><td><code>crfff_unit_price</code></td><td>10進数</td><td><strong>4</strong></td></tr><tr><td>26</td><td>担当者コード</td><td><code>crfff_staff_code</code></td><td>テキスト</td><td>20</td></tr><tr><td>27</td><td>直送先コード</td><td><code>crfff_dropship_code</code></td><td>テキスト</td><td>20</td></tr><tr><td>28</td><td>直送先名１</td><td><code>crfff_dropship_name1</code></td><td>テキスト</td><td>100</td></tr><tr><td>29</td><td>手配票No</td><td><code>crfff_RNo</code></td><td>テキスト</td><td>30</td></tr><tr><td>30</td><td>得意先コード</td><td><code>crfff_customer_code</code></td><td>テキスト</td><td>20</td></tr><tr><td>31</td><td>得意先名１</td><td><code>crfff_customer_name1</code></td><td>テキスト</td><td>100</td></tr><tr><td>32</td><td>内税額</td><td><code>crfff_tax_incl_amount</code></td><td>10進数</td><td>2</td></tr><tr><td>33</td><td>入数</td><td><code>crfff_pack_qty</code></td><td>10進数</td><td>3</td></tr><tr><td>34</td><td>納期</td><td><code>crfff_delivery_date</code></td><td><strong>日付のみ / タイムゾーン非依存</strong></td><td>—</td></tr><tr><td>35</td><td>売価金額</td><td><code>crfff_sales_amount</code></td><td>10進数</td><td>2</td></tr><tr><td>36</td><td>売上項目１</td><td><code>crfff_sales_attr1</code></td><td>テキスト</td><td>50</td></tr><tr><td>37</td><td>売上項目２</td><td><code>crfff_sales_attr2</code></td><td>テキスト</td><td>50</td></tr><tr><td>38</td><td>売上項目３</td><td><code>crfff_sales_attr3</code></td><td>テキスト</td><td>50</td></tr><tr><td>39</td><td>売単価</td><td><code>crfff_sales_unit_price</code></td><td>10進数</td><td><strong>4</strong></td></tr><tr><td>40</td><td>箱数</td><td><code>crfff_box_qty</code></td><td>10進数</td><td>3</td></tr><tr><td>41</td><td>番船</td><td><code>crfff_shipment_no</code></td><td>テキスト</td><td>30</td></tr><tr><td>42</td><td>備考</td><td><code>crfff_note</code></td><td>複数行テキスト</td><td>1000</td></tr><tr><td>43</td><td>標準価格</td><td><code>crfff_standard_price</code></td><td>10進数</td><td>2</td></tr><tr><td>44</td><td>部門コード</td><td><code>crfff_dept_code</code></td><td>テキスト</td><td>20</td></tr><tr><td>45</td><td>スポット得意先名１</td><td><code>crfff_spot_customer_name1</code></td><td>テキスト</td><td>100</td></tr><tr><td>46</td><td>スポット得意先名２</td><td><code>crfff_spot_customer_name2</code></td><td>テキスト</td><td>100</td></tr><tr><td>47</td><td>ﾌﾟﾛｼﾞｪｸﾄ名名</td><td><code>crfff_project_name</code></td><td>テキスト</td><td>100</td></tr><tr><td>48</td><td>軽減税率マーク</td><td><code>crfff_reduced_tax_mark</code></td><td>ルックアップ</td><td>—</td></tr><tr><td>49</td><td>見積No</td><td><code>crfff_quote_no</code></td><td>テキスト</td><td>30</td></tr><tr><td>50</td><td>原価軽減税率マーク</td><td><code>crfff_cost_reduced_tax_mark</code></td><td>ルックアップ</td><td>—</td></tr><tr><td>51</td><td>受注残高</td><td><code>crfff_backlog_amount</code></td><td>10進数</td><td>2</td></tr><tr><td>52</td><td>受注残数</td><td><code>crfff_backlog_qty</code></td><td>10進数</td><td>3</td></tr><tr><td>53</td><td>出荷マーク</td><td><code>crfff_ship_mark</code></td><td>ルックアップ</td><td>—</td></tr><tr><td>54</td><td>単位区分１受注残数</td><td><code>crfff_unit1_backlog_qty</code></td><td>10進数</td><td>3</td></tr><tr><td>55</td><td>単位区分１受注数</td><td><code>crfff_unit1_order_qty</code></td><td>10進数</td><td>3</td></tr><tr><td>56</td><td>単位区分１単位</td><td><code>crfff_unit1_unit</code></td><td>テキスト</td><td>20</td></tr><tr><td>57</td><td>直送先名２</td><td><code>crfff_dropship_name2</code></td><td>テキスト</td><td>100</td></tr><tr><td>58</td><td>得意先名２</td><td><code>crfff_customer_name2</code></td><td>テキスト</td><td>100</td></tr><tr><td>59</td><td>利益率</td><td><code>crfff_profit_rate</code></td><td>10進数</td><td>3</td></tr></tbody></table></div>
+<h3 id="s21"><span class="hn">3-4</span>型選択の根拠(ここを間違えると後戻りできない)</h3>
+<h4 id="s22">通貨型を使わない</h4>
+<p>金額列(原価/受注金額/粗利益/売価金額/標準価格/内税額/外税額/受注残高)は <strong>10進数</strong> にする。 Dataverse の<strong>通貨型</strong>を選ぶと、</p>
+<ul><li><code>transactioncurrencyid</code>(通貨へのルックアップ)と <code>exchangerate</code> が暗黙に必要になる</li><li>列ごとに <code>_base</code> 列(基準通貨換算値)が自動生成され、<strong>列数と容量が実質2倍</strong>になる</li><li>書き込みのたびに通貨解決が走り、フローが複雑化する</li></ul>
+<p>単一通貨(円)しか扱わないなら通貨型は害しかない。</p>
+<h4 id="s22">日付は「日付のみ / タイムゾーン非依存」</h4>
+<p><code>受注日</code> <code>納期</code> を「日付と時刻」型にすると、Dataverse は UTC で保存しユーザーのタイムゾーンで表示する。 JST(+9)環境では <strong>2026-08-04 が 2026-08-03 と表示される事故</strong>が起きる。 「日付のみ」+ 動作「タイムゾーンに依存しない」を必ず選ぶ。<strong>この設定は後から変更できない。</strong></p>
+<h4 id="s22">テキスト長を既定の100/4000のままにしない</h4>
+<p>Dataverse は実データ長で消費するが、長すぎる定義はインデックス・検索列の効率を落とす。 逆に短すぎると同期が失敗する。実データの最大長を調べて +50% 程度で設定する。</p>
+<h4 id="s22">論理名は必ず小文字になる — <code>crfff_RNo</code> の落とし穴</h4>
+<p>Dataverse の<strong>論理名(logical name)は常に小文字</strong>に正規化される。 列作成時に表示名「手配票No」、スキーマ名 <code>crfff_RNo</code> と入力しても、 Web API と Power Automate の Dataverse コネクタが使う論理名は <strong><code>crfff_rno</code></strong> になる。</p>
+<ul><li>Office Script が返す JSON キーは <code>RNo</code>(本書の表記どおり)</li><li>フローで Dataverse 列に書き込む際の参照名は <strong><code>crfff_rno</code></strong>(小文字)</li></ul>
+<p>他の58列は元から小文字なのでこの問題は起きない。<strong>大文字を含むのは <code>RNo</code> だけ</strong>なので、 ここだけ取り違えると「その列だけ無言で値が入らない」という切り分けの難しい障害になる。</p>
+<h4 id="s22">監査(Auditing)をOFFにする</h4>
+<p>テーブルの監査をONにすると、更新のたびに監査ログ行が生成される。 毎日500行更新する運用では<strong>本体データより監査ログのほうが大きくなる</strong>。 本格版 Dataverse では 2 GB のハード上限は無いが、テナント共有の容量プールを圧迫する(3-7)。 必要なら Dataverse ではなく SharePoint リストに変更履歴を出す。</p>
+<h3 id="s22"><span class="hn">3-5</span>区分マスタと、追加リクエストゼロのルックアップ解決</h3>
+<p><strong>マスタ1本で7列すべてを賄えることが確認済み</strong>のため、区分種別は不要。代替キーは単一列になる。</p>
+<div class="code"><pre><code>区分マスタ (crfff_kubun)
+  crfff_kubun_code   テキスト(10)   区分コード   ← 代替キー(単一列)
+  crfff_kubun_name   テキスト(50)   区分名       ← 主名前列</code></pre></div>
+<p>参照する列は7本。すべて同じ区分マスタへのルックアップになる。</p>
+<div class="tw"><table><thead><tr><th>参照元の列</th><th>ルックアップ列の論理名</th></tr></thead><tbody><tr><td>データ区分</td><td><code>crfff_data_kubun</code></td></tr><tr><td>原価税込区分</td><td><code>crfff_cost_taxincl_kubun</code></td></tr><tr><td>税込区分</td><td><code>crfff_taxincl_kubun</code></td></tr><tr><td>単位区分</td><td><code>crfff_unit_kubun</code></td></tr><tr><td>軽減税率マーク</td><td><code>crfff_reduced_tax_mark</code></td></tr><tr><td>原価軽減税率マーク</td><td><code>crfff_cost_reduced_tax_mark</code></td></tr><tr><td>出荷マーク</td><td><code>crfff_ship_mark</code></td></tr></tbody></table></div>
+<aside class="note"><p>同一テーブルへのルックアップを7本作るため、<strong>リレーションシップのスキーマ名が7つとも 重複しない</strong>ように命名する必要がある(既定名は衝突する)。列作成時に個別に指定すること。</p></aside>
+<aside class="note"><p><strong>注意</strong>: マスタを共有するため、列ごとに値域を絞ることはできない。 例えば <code>出荷マーク</code> に <code>単位区分</code> 用のコードを入れても Dataverse は受け付ける。 値の妥当性は Excel 側の入力規則か、週次の整合性検証フロー(5-4)で担保する。</p></aside>
+<p><strong>素直にやると破綻する</strong>: ルックアップ列に値を入れるには通常、対象行のGUIDが要る。 ループ内で「区分マスタから行を取得」を7回やると <strong>+3,500リクエスト/500行</strong>。</p>
+<p><strong>解決策 — 代替キーによる <code>@odata.bind</code></strong>: Dataverse コネクタの「新しい行の追加」のルックアップ欄に、GUIDではなく <strong>代替キー参照の文字列</strong>を直接入れる。Dataverse サーバー側で解決されるため <strong>追加リクエストは発生しない</strong>。</p>
+<div class="code"><pre><code>/crfff_kubuns(crfff_kubun_code='01')</code></pre></div>
+<p>式にすると(Power Automate ではシングルクォートを2つ重ねてエスケープする):</p>
+<div class="code"><pre><code>concat('/crfff_kubuns(crfff_kubun_code=''', items('新規ループ')?['data_kubun'], ''')')</code></pre></div>
+<aside class="note"><p>本格版 Dataverse では代替キーの作成に制約が無い(Teams 環境では作成可否がテナント設定に左右されていた)。 なお、フロー冒頭で区分マスタ5行を1回だけ取得し(=1リクエスト)、技法2の辞書に載せて GUID を引く方法も同じコストで済む。 <strong>代替案A(SharePoint リスト)に切り替える可能性があるなら、辞書方式のほうが移植しやすい。</strong></p></aside>
+<p><strong>区分列に空欄がある場合の扱い</strong></p>
+<p>区分コードが空だと <code>/crfff_kubuns(crfff_kubun_code='')</code> になり、該当行が無いため <strong>Dataverse が 404 を返してその行の作成が失敗する</strong>。区分列は7本あるので、 7倍の確率でこれを踏む。</p>
+<p>対処は2つ。<strong>推奨は前者</strong>。</p>
+<ol><li><strong>区分マスタに「未設定」行を1本追加する</strong>(<code>__NONE__</code> / 未設定)。 Office Script 側で空を <code>__NONE__</code> に寄せる。フローに分岐が不要で、 集計時に「未設定が何件あるか」が見えるという利点もある</li><li>フロー側で <code>if(empty(...), null, concat(...))</code> と分岐する。 7列すべてに書く必要があり、式が読みにくくなる</li></ol>
+<p>現時点で区分列に空欄が入るかは未確認(0-5)。<strong>入らないなら何もしなくてよい。</strong></p>
+<h3 id="s23"><span class="hn">3-6</span>同期制御 / 同期エラー</h3>
+<div class="code"><pre><code>同期制御 (crfff_synccontrol)
+  crfff_file_name        テキスト(100)  代替キー
+  crfff_last_synced_on   日付と時刻
+  crfff_file_modified_on 日付と時刻     SharePoint側の更新日時
+  crfff_row_count        整数
+  crfff_status           選択肢         稼働中 / 確定 / エラー / 停止
+  crfff_last_run_id      テキスト(50)
+
+同期エラー (crfff_syncerror)
+  crfff_run_id, crfff_sync_key, crfff_message, crfff_row_json, crfff_occurred_on</code></pre></div>
+<p>同期エラーは<strong>行単位</strong>で作る。同期ログ(成功記録)は<strong>実行単位</strong>で作る。 成功ログを行単位で作ると、それだけで500リクエスト/回を消費し容量も食う。</p>
+<h3 id="s24"><span class="hn">3-7</span>容量見積り</h3>
+<div class="tw"><table><thead><tr><th>内訳</th><th>1行あたり</th></tr></thead><tbody><tr><td>テキスト列 35本 × 平均12文字 × 2byte</td><td>約 840 B</td></tr><tr><td>数値・日付列 17本 × 8byte</td><td>約 136 B</td></tr><tr><td>ルックアップ 7本 × 16byte</td><td>約 112 B</td></tr><tr><td>Dataverse システム列オーバーヘッド</td><td>約 800〜1,000 B</td></tr><tr><td><strong>計</strong></td><td><strong>約 2.0〜2.5 KB</strong></td></tr></tbody></table></div>
+<ul><li>100,000行 → <strong>200〜250 MB</strong></li><li>年間増加 12ファイル × 500行 = 6,000行 → <strong>約 15 MB/年</strong></li></ul>
+<p>本格版 Dataverse では容量が<strong>テナント単位のプール</strong>になり、Dataverse for Teams の 2 GB/環境という ハードな上限は無くなる。付与元は以下。</p>
+<div class="tw"><table><thead><tr><th>付与元</th><th>Dataverse Database 容量</th></tr></thead><tbody><tr><td>テナント既定容量(最初の Power Apps / Power Automate ライセンス購入時)</td><td>一般に 10 GB</td></tr><tr><td>Power Automate Premium 1ライセンスあたり</td><td>+ 250 MB</td></tr><tr><td>Power Apps Premium(per user) 1ライセンスあたり</td><td>+ 250 MB</td></tr></tbody></table></div>
+<p><strong>2 GB の壁は消えたが、代わりに注意点が2つ増えた。</strong></p>
+<ol><li><strong>容量はテナント共有のプール。</strong> 他部署が Dataverse を使い始めると食い合う。 本設計だけを見て「10 GB あるから余裕」と判断してはいけない</li><li><strong>実際の空き容量は Power Platform 管理センター → リソース → 容量 で必ず確認する。</strong> テナントごとに購入履歴が違うため、上表は目安でしかない。<strong>着手前に実測すること</strong></li></ol>
+<p><strong>監査(Auditing)は引き続き OFF を推奨。</strong> 2 GB の壁は無くなったが、毎日500行更新する運用では 監査ログが本体データを上回り、テナント全体の容量を圧迫する。 変更履歴が必要なら SharePoint リストへ出す。</p>
+<hr>
+<h2 id="s25"><span class="hn">4</span>Office Script(読み取り・正規化・ハッシュ生成)</h2>
+<p>Excel Online (Business) の「スクリプトの実行」は<strong>標準コネクタのアクション</strong>。 1リクエストで以下をすべて処理でき、フロー側のアクション数を劇的に減らせる。</p>
+<ul><li>テーブル <code>T_DB</code> が無ければ作成する(冪等。毎月の手作業が不要になる)</li><li>テーブル全体を読む(「行を一覧表示」の256件ページングが不要)</li><li>半角カナ・日本語の列名 → ASCII論理名に正規化</li><li>日付シリアル値 → ISO文字列に変換</li><li>空白セル・不可視文字(ZWSP等) → null に正規化</li><li>受注No + 手配票No ごとに出現順で <code>sub_no</code> を採番し、同期キーを生成</li><li>行ハッシュ(FNV-1a 16桁hex)の生成</li></ul>
+<h3 id="s26">実装</h3>
+<p><strong>完全なコードは <a href="./sync-read-script.ts"><code>sync-read-script.ts</code></a> を参照。</strong> 本書には転記しない(二重管理になり、必ず片方が古くなるため)。</p>
+<p>同ファイルは <code>tsc</code> による型チェックと、採番・ハッシュ・正規化・異常系を含む 動作テストを通している。Office Scripts エディタへはそのまま貼り付けられる。</p>
+<h3 id="s27">設計上の要点</h3>
+<div class="tw"><table><thead><tr><th>要点</th><th>内容</th></tr></thead><tbody><tr><td>同期キー</td><td><code>受注No + 手配票No + sub_no(2桁)</code> を<strong>区切り無しで連結</strong>。例: <code>13524</code> + <code>R08-0234</code> + <code>01</code> → <code>13524R08-023401</code></td></tr><tr><td>採番の単位</td><td>受注No + 手配票No。片方の手配票No に行を足しても、他方の番号は動かない</td></tr><tr><td>行ハッシュ</td><td>業務列59本のみ。<code>sub_no</code> は含めない(採番はキー側の責務)</td></tr><tr><td>列の並び順</td><td><code>COL_MAP</code> のキー順がハッシュの計算順を決める。<strong>並び替えると全行のハッシュが変わり、現在月の全行が更新対象になる</strong></td></tr><tr><td>解釈できない値</td><td>null に丸めず<strong>例外で同期全体を止める</strong>。<code>納期</code> に <code>未定</code> が入っていた行だけが静かに欠落する事故を防ぐ</td></tr><tr><td>エラーメッセージ</td><td>必ず Excel の行番号を含める。500行のどこが原因かを即座に特定できる</td></tr></tbody></table></div>
+<h3 id="s28">異常系で停止する条件</h3>
+<p>いずれも Excel の行番号付きで例外を投げ、同期を中断する。</p>
+<ul><li>列が見つからない(<code>COL_MAP</code> と Excel ヘッダーの不一致)</li><li><code>受注No</code> または <code>手配票No</code> が空 — 同期キーの構成要素は空にできない</li><li><code>受注No</code> または <code>手配票No</code> に英数字・ハイフン・アンダースコア以外の文字</li><li><code>受注日</code> / <code>納期</code> が日付として解釈できない(<code>未定</code> <code>-</code> <code>※</code> など)</li><li>数値列が数値として解釈できない</li><li>同一グループの明細が99行を超えた</li><li>同期キーが重複した(区切り無し連結による桁の食い違い。Dataverse の代替キー制約でも検知されるが、こちらのほうが原因が分かりやすい)</li></ul>
+<h3 id="s29"><span class="hn">4-1</span>Office Script の制約と対策</h3>
+<div class="tw"><table><thead><tr><th>制約</th><th>影響</th><th>対策</th></tr></thead><tbody><tr><td>ファイルが OneDrive/SharePoint 上にある必要がある</td><td>—</td><td>本設計は元々SharePoint配置</td></tr><tr><td>テナントで Office Scripts が無効化されている場合がある</td><td>使えない</td><td>Microsoft 365 管理センターで有効化。不可なら「テーブルに存在する行を一覧表示」+ Select にフォールバック(リクエスト +5〜10)</td></tr><tr><td>戻り値のペイロードに上限がある</td><td>500行×59列は約1MB前後で収まる見込みだが、<code>備考</code> が長いと超える可能性</td><td>250行ずつ2回に分割、または <code>備考</code> を別スクリプトで取得</td></tr><tr><td>スクリプト実行時間の上限</td><td>500行なら問題なし</td><td>—</td></tr><tr><td>ファイルがユーザーに開かれてロック中</td><td>読み取り自体は可能だが「編集途中」を同期しうる</td><td>後述のデバウンス</td></tr></tbody></table></div>
+<h3 id="s30"><span class="hn">4-2</span>Office Scripts が使えない場合のフォールバック</h3>
+<p>Excel側の各ファイルに補助列を2本追加する。</p>
+<div class="code"><pre><code>_sub_no    = COUNTIFS($受注No$2:受注No2, 受注No2, $手配票No$2:手配票No2, 手配票No2)
+_同期キー   = 受注No2 &amp; 手配票No2 &amp; TEXT(_sub_no,"00")
+_行ハッシュ = TEXTJOIN("|",FALSE, TEXT(受注日,"yyyy-mm-dd"), TEXT(納期,"yyyy-mm-dd"), A2, B2, ...)</code></pre></div>
+<p><code>_sub_no</code> は先頭行からの累積 COUNTIFS で「受注No + 手配票No 単位の出現順」を再現する。</p>
+<p>デメリット: 500行×数式3本がファイルを重くする(COUNTIFS の累積参照は特に重い) / 日付の書式指定漏れでハッシュが毎回変わる / テーブル作成の自動化ができない / 値の正規化(先行ゼロ・不可視文字・日付の文字列混入)を数式で再現しきれない。 <strong>Office Script が使えるならそちらを強く推奨。</strong></p>
+<hr>
+<h2 id="s31"><span class="hn">5</span>フロー設計</h2>
+<h3 id="s32"><span class="hn">5-1</span>フロー① 最新月ファイル差分同期(メイン)</h3>
+<p><strong>トリガー</strong>: SharePoint「ファイルが作成または変更されたとき(プロパティのみ)」</p>
+<ul><li>ライブラリ: <code>毎月DB</code>、フォルダー: <code>/current</code></li><li>ポーリング間隔: <strong>15分</strong>(5分にするとポーリングだけで288リクエスト/日)</li><li>同時実行制御: <strong>ON / 並列度1</strong>(直列化。二重実行による競合を防ぐ)</li></ul>
+<p><strong>ステップ</strong></p>
+<div class="tw"><table><thead><tr><th>#</th><th>アクション</th><th>内容</th></tr></thead><tbody><tr><td>1</td><td>トリガー</td><td>ファイル変更検知</td></tr><tr><td>2</td><td>条件</td><td>ファイル名が <code>~$</code> で始まる → 終了</td></tr><tr><td>3</td><td>Dataverse 行を一覧表示</td><td>同期制御(<code>file_name eq ''</code>)</td></tr><tr><td>4</td><td>条件(デバウンス)</td><td><code>最終同期日時</code> から3分以内 → 終了。編集中の連続保存で無駄打ちしない</td></tr><tr><td>5</td><td>Excel スクリプトの実行</td><td>上記 Office Script → <code>excelRows[]</code></td></tr><tr><td>6</td><td>Dataverse 行を一覧表示</td><td><code>crfff_meisais</code>、filter <code>crfff_source_file eq ''</code>、<strong>select <code>crfff_sync_key,crfff_row_hash,crfff_meisaiid</code></strong></td></tr><tr><td>7</td><td>Dataverse 行を一覧表示</td><td>区分マスタ(5行)</td></tr><tr><td>8-10</td><td>アイテムの選択 × 3</td><td>GUID / HASH / EXCELキー の辞書材料</td></tr><tr><td>11-13</td><td>作成 × 3</td><td><code>json(concat('{', join(...), '}'))</code></td></tr><tr><td>14-16</td><td>配列のフィルター処理 × 3</td><td>新規 / 更新 / 削除</td></tr><tr><td>17</td><td>条件(サーキットブレーカー)</td><td>削除件数 &gt; max(20, 既存件数 × 0.2) → 中断してTeamsに通知</td></tr><tr><td>18</td><td>Apply to each(新規)</td><td>新しい行の追加。<strong>並列度 20</strong></td></tr><tr><td>19</td><td>Apply to each(更新)</td><td>行の更新。行ID = <code>outputs('GUID辞書')?[items(...)?['sync_key']]</code>。<strong>並列度 20</strong></td></tr><tr><td>20</td><td>Apply to each(削除)</td><td>行の削除。<strong>並列度 20</strong></td></tr><tr><td>21</td><td>Dataverse 行の更新</td><td>同期制御を更新</td></tr><tr><td>22</td><td>スコープ(実行後: 失敗時)</td><td>同期エラーに記録 + Teamsに通知</td></tr></tbody></table></div>
+<p><strong>主要な式</strong></p>
+<div class="code"><pre><code>■ Select_GUID (差し込み元: outputs('Dataverse行の一覧')?['body/value'])
+  concat('"', item()?['crfff_sync_key'], '":"', item()?['crfff_meisaiid'], '"')
+
+■ Select_HASH
+  concat('"', item()?['crfff_sync_key'], '":"', coalesce(item()?['crfff_row_hash'],''), '"')
+
+■ Select_EXCELKEY (差し込み元: body('スクリプトの実行')?['result'])
+  concat('"', item()?['sync_key'], '":1')
+
+■ 作成「GUID辞書」
+  json(concat('{', join(body('Select_GUID'), ','), '}'))
+
+■ フィルター「新規」   差し込み元: body('スクリプトの実行')?['result']
+  @equals(outputs('GUID辞書')?[item()?['sync_key']], null)
+
+■ フィルター「更新」   差し込み元: body('スクリプトの実行')?['result']
+  @and(
+    not(equals(outputs('GUID辞書')?[item()?['sync_key']], null)),
+    not(equals(outputs('HASH辞書')?[item()?['sync_key']], item()?['row_hash']))
+  )
+
+■ フィルター「削除」   差し込み元: outputs('Dataverse行の一覧')?['body/value']
+  @equals(outputs('EXCELキー辞書')?[item()?['crfff_sync_key']], null)
+
+■ 更新ループ内の行ID
+  outputs('GUID辞書')?[items('更新ループ')?['sync_key']]
+
+■ 区分ルックアップ(代替キー方式)
+  concat('/crfff_kubuns(crfff_kubun_code=''',
+         coalesce(items('新規ループ')?['data_kubun'], ''), ''')')
+  ※ 区分が空の行があるなら、空のときはルックアップ欄を null にする分岐が要る</code></pre></div>
+<p><strong>Dataverse 行の一覧表示で <code>select</code> を必ず指定する理由</strong> 指定しないと59列すべてが返り、500行で数MBのペイロードになる。 辞書化に必要なのは <code>sync_key</code> <code>row_hash</code> <code>GUID</code> の3つだけ。転送量とタイムアウトの両方に効く。</p>
+<h3 id="s33"><span class="hn">5-2</span>フロー② 月次締め</h3>
+<ul><li>トリガー: 繰り返し(毎月1日 02:00 / または手動)</li><li>フロー①を最後に1回実行 → <code>current/</code> のファイルを <code>archive/</code> へ移動 → 同期制御の状態を「確定」</li><li>新しい月のファイルを <code>current/</code> に配置 → 同期制御に新規行を作成</li><li><strong>削除サーキットブレーカーをこのフローでは一時的に緩和する</strong>(全行入替が正常な操作になるため)</li></ul>
+<h3 id="s34"><span class="hn">5-3</span>フロー③ 区分マスタ同期</h3>
+<ul><li>トリガー: <code>master/区分表.xlsx</code> の変更</li><li>5行なので技法を使わず素直に回してよい(10リクエスト程度)</li></ul>
+<h3 id="s35"><span class="hn">5-4</span>フロー④ 整合性検証(週次)</h3>
+<ul><li>トリガー: 繰り返し(毎週月曜 07:00)</li><li>Excel件数 vs Dataverse件数、ハッシュ不一致件数を比較 → Teamsチャネルに投稿</li><li><strong>物理削除を採用しているため、これが実質的な唯一の安全網になる</strong></li></ul>
+<h3 id="s36"><span class="hn">5-5</span>エラー処理</h3>
+<div class="tw"><table><thead><tr><th>事象</th><th>挙動</th><th>対策</th></tr></thead><tbody><tr><td>Dataverse 429(サービス保護制限)</td><td>Power Automate が自動リトライ(既定4回・指数バックオフ)</td><td>リトライもリクエストを消費する。並列度を20以下に抑えて発生自体を減らす</td></tr><tr><td>一部の行だけ失敗</td><td>既定では以降のループも継続</td><td>スコープ+「実行後の構成: 失敗時」で同期エラーテーブルに記録</td></tr><tr><td>フロー全体の失敗</td><td>ハッシュが更新されないので次回再試行される</td><td><strong>冪等性が保証されているため、そのまま再実行して安全</strong></td></tr><tr><td>Excelがロック中</td><td>読めるが編集途中の可能性</td><td>デバウンス(3分)+ 同時実行制御</td></tr></tbody></table></div>
+<hr>
+<h2 id="s37"><span class="hn">6</span>初期ロード(初回のみ例外を使う)</h2>
+<h3 id="s38"><span class="hn">6-1</span>手順</h3>
+<p><strong>Step 1 — ローカルPCで200ファイルを統合CSVにする(Power Query)</strong></p>
+<p>Excel を新規作成 → データ → データの取得 → ファイルから → フォルダーから → <code>archive</code> フォルダーを指定 → 「データの変換」</p>
+<div class="code"><pre><code>1. Content 列以外を削除
+2. カスタム列: Excel.Workbook([Content])
+3. 展開 → Kind = "Table" かつ Name = "T_DB" の行だけ残す
+4. Data 列を展開(59列 + _明細行番)
+5. Source.Name から source_file 列を作る
+6. カスタム列 sync_key = [受注No] &amp; "-" &amp; Text.PadStart(Text.From([_明細行番]), 4, "0")
+7. 受注日 / 納期 を「日付」型に、コード系を「テキスト」型に明示変換
+8. 閉じて読み込む → CSV(UTF-8 BOM付き)としてエクスポート</code></pre></div>
+<p><strong>Step 2 — 行ハッシュは空のままにする</strong></p>
+<p>初期ロードのハッシュ計算(Power Query)と定常同期のハッシュ計算(Office Script)を 完全に一致させるのは事実上不可能。<strong>わずかな差でも初回同期で全10万行が更新対象になり、 リクエスト上限を確実に突破する。</strong></p>
+<p>回避策:</p>
+<ul><li><code>archive/</code> の行は<strong>同期対象外</strong>なのでハッシュは不要 → 空(null)のまま</li><li><code>current/</code> の当月分だけは、初期ロード後に<strong>フロー①を1回流してハッシュを埋める</strong>(500行=約514リクエスト)</li><li>空ハッシュの行は <code>not(equals(null, row_hash))</code> が真になるため、自動的に更新対象になる。想定通りの挙動</li></ul>
+<p><strong>Step 3 — make.powerapps.com からインポート</strong></p>
+<ol><li><code>make.powerapps.com</code> → 環境セレクタで Day 0 で作成した運用環境を選択</li><li>テーブル → 毎月DB明細 → データのインポート → テキスト/CSV から</li><li>列マッピングを設定。区分列は代替キー(<code>区分コード</code>)で解決</li><li>10万行なら 1万行 × 10ファイルに分割すると失敗時の切り分けが楽</li></ol>
+<aside class="note"><p>本格版 Dataverse では、1回のインポートの上限に達した場合でも <code>$batch</code>(技法5)による投入が選べる。 40,000/日の予算があるため、素直なコネクタでも 100,000行 を約3日で投入できる。</p></aside>
+<p><strong>Step 4 — 検証</strong></p>
+<p>フロー④を手動実行し、Excel件数とDataverse件数、サンプル100行の値一致を確認。</p>
+<h3 id="s39"><span class="hn">6-2</span>前提4(入力はPower Automateのみ)を厳守する場合(参考)</h3>
+<div class="tw"><table><thead><tr><th>方式</th><th>所要</th><th>備考</th></tr></thead><tbody><tr><td>単一アカウント日次分割</td><td><strong>約3日</strong></td><td>Premium の 40,000/日 により、6,000/日 時代の20日から大幅短縮</td></tr><tr><td>5ユーザーに分散</td><td>1日未満</td><td>リクエストは<strong>ユーザー単位</strong>。Premium 環境では分散する必要がまず生じない</td></tr><tr><td>直近24ヶ月のみ投入</td><td>約2日</td><td>12,000行。古いデータは SharePoint 上の Excel を Power Query で参照</td></tr></tbody></table></div>
+<hr>
+<h2 id="s40"><span class="hn">7</span>具体例(リクエスト消費のトレース)</h2>
+<h3 id="s41">例1 — 最新月ファイルに新規10行を追加して保存</h3>
+<div class="tw"><table><thead><tr><th>内訳</th><th>リクエスト</th></tr></thead><tbody><tr><td>トリガーポーリング(この回)</td><td>1</td></tr><tr><td>固定オーバーヘッド</td><td>14</td></tr><tr><td>新規作成 10行</td><td>10</td></tr><tr><td><strong>合計</strong></td><td><strong>25</strong></td></tr></tbody></table></div>
+<p>日次予算 5,800 に対して 0.4%。1日230回やっても収まる。</p>
+<h3 id="s42">例2 — 既存500行のうち3行の単価を修正して保存</h3>
+<div class="tw"><table><thead><tr><th>内訳</th><th>リクエスト</th></tr></thead><tbody><tr><td>固定オーバーヘッド</td><td>14</td></tr><tr><td>更新 3行</td><td>3</td></tr><tr><td><strong>合計</strong></td><td><strong>17</strong></td></tr></tbody></table></div>
+<p><strong>残り497行はハッシュが一致するため一切書き込まれない。</strong> これが技法4の価値で、ハッシュ無しなら500リクエスト消費していた。</p>
+<h3 id="s43">例3 — 500行を全入れ替え(前月分を削除して当月分を貼り付け)</h3>
+<div class="tw"><table><thead><tr><th>内訳</th><th>リクエスト</th></tr></thead><tbody><tr><td>固定オーバーヘッド</td><td>14</td></tr><tr><td>削除 500行</td><td>500</td></tr><tr><td>新規 500行</td><td>500</td></tr><tr><td><strong>合計</strong></td><td><strong>1,014</strong></td></tr></tbody></table></div>
+<p>日次予算の 17%。1日5回までなら安全、6回目でリスク域。</p>
+<p>ただし<strong>削除500件は全体の100%</strong>なのでサーキットブレーカーが作動して中断する。 これは意図通りの動作で、「全入替」は月次締めフロー②で明示的に許可された操作としてのみ実行する。 通常運用中にこれが起きたら、それは高確率で事故(フィルター状態で保存した、別月ファイルを上書きした等)。</p>
+<hr>
+<h2 id="s44"><span class="hn">8</span>メリット / デメリット</h2>
+<h3 id="s45">メリット</h3>
+<ol><li><strong>リレーショナルな型・一意制約・参照整合性</strong>が効く。素のExcelでは不可能な整合性担保</li><li><strong>リクエスト消費が実変更量に比例</strong>。500行保存しても変更0なら書き込み0</li><li><strong>完全な冪等性</strong>。代替キー+ハッシュ設計により、何度流しても結果が同じ。失敗しても再実行するだけ</li><li><strong>容量のハード上限が無くなった</strong>(2 GB/環境 → テナントプール)。履歴・ログの選択肢が戻る</li><li><strong>列レベルセキュリティが使える。</strong> <code>原価</code> <code>粗利益</code> <code>利益率</code> を特定メンバーにだけ見せる運用が可能</li><li><strong>バックアップ / 復元 / 環境のコピーが使える。</strong> 本番を複製した検証環境を作れる</li><li><strong>環境が Teams のチームから独立する。</strong> チームを削除してもデータは消えない</li><li><strong>プラグイン / カスタム API</strong> でサーバー側のバリデーションと一括処理ができる</li><li><strong>プレミアムコネクタとオンプレミスデータゲートウェイ</strong>が使え、将来の拡張余地が大きい</li><li><strong>リクエスト上限が 6,000 → 40,000</strong>。大量更新や初期ロードの現実性が上がる</li><li><strong>最新月1ファイルのみ更新という業務特性が、この構成に理想的に噛み合う</strong></li></ol>
+<h3 id="s46">デメリット</h3>
+<ol><li><strong>Power Automate Premium のライセンス費用が発生する</strong>(約 $15/ユーザー/月)。<strong>前提3に抵触する</strong></li><li><strong>容量がテナント共有プールになり、他部署と食い合う。</strong> 2 GB の上限と引き換えに、 自分だけでは制御できない変数が増えた</li><li><strong>運用負荷が上がる。</strong> Power Platform 管理センター、ソリューション、DLP ポリシー、 環境のライフサイクル管理の知識が必要になる。Teams 環境は「作れば動く」だったがそうではなくなる</li><li><strong>接続の所有者が単一障害点。</strong> 所有者の退職・パスワード変更・MFA再認証で全フローが停止する</li><li><strong>Excel Online コネクタが脆い。</strong> テーブル名変更・ファイル移動・ファイルサイズ超過で即死</li><li><strong>OneDrive同期の遅延と競合。</strong> PCがスリープ/オフラインだと同期されず、競合コピーが発生しうる</li><li><strong>Excel側の改修が必須</strong>(コード列の文字列書式化)。既存業務手順に影響する</li><li><strong>障害の切り分けが5層にまたがる</strong>(Excel / OneDrive / SharePoint / Power Automate / Dataverse)</li></ol>
+<hr>
+<h2 id="s47"><span class="hn">9</span>見落としやすい弱点(率直な指摘)</h2>
+<p>重要度順。</p>
+<h3 id="s48"><span class="hn">1</span>ライセンス未決裁のまま設計を進めるリスク — 最大の落とし穴</h3>
+<p>本格版 Dataverse は <strong>Power Automate Premium 無しでは動かない</strong>(0-2)。 Copilot を足しても解決しない。</p>
+<p>この決裁が取れないまま Excel 側の改修や Office Script の実装を進めると、 <strong>作ったものが丸ごと使えなくなる</strong>。先に決裁を取るか、少なくとも 「取れなかった場合は代替案A(SharePoint リスト)へ切り替える」と決めてから着手すること。</p>
+<p>代替案Aへの切り替えはフロー構造(技法1〜4)をほぼ流用できるため、 <strong>Excel 側の改修と Office Script は無駄にならない</strong>。切り替え点はDataverseコネクタの 部分だけ。この事実が分かっていれば並行して進めてよい。</p>
+<h3 id="s49"><span class="hn">2</span>物理削除 + Excelの誤操作 = 復旧不能</h3>
+<p>以下はすべて「Excel上で行が消えたように見える」操作で、そのままDataverseの物理削除につながる。</p>
+<ul><li>オートフィルターで絞り込んだ状態のまま別ファイルとして保存した</li><li>誤って行を削除して気づかず保存した</li><li>前月のファイルを <code>current/</code> に置いてしまった</li></ul>
+<p><strong>サーキットブレーカーは必須</strong>: 1回の同期で削除対象が <code>max(20件, 既存件数の20%)</code> を超えたら 中断してTeamsに通知し、人間が承認するまで実行しない。実装コストは条件アクション1個(1リクエスト)。</p>
+<p>さらに、<strong>論理削除への変更を再検討する価値が上がった</strong>。 本格版 Dataverse では容量のハード上限が無くなったため、削除フラグ列を持つコストが 実質ゼロになっている。物理削除を選ぶ積極的な理由が「Excelと完全一致させたい」だけなら、 フロー④の整合性検証で同じ目的が達成できる。</p>
+<h3 id="s50"><span class="hn">3</span>サービスアカウントに Premium ライセンスが要る</h3>
+<p>個人アカウントでフローを作ると、その人の異動・退職・パスワード変更・MFA再認証で <strong>全フローの接続が無効化され、同期が無言で止まる</strong>。 同期専用アカウント(例: <code>svc-dbsync@...</code>)を用意するのが正しい。</p>
+<p><strong>本格版 Dataverse では、このアカウントにも Power Automate Premium が必要</strong>になる。 Business Standard 1本では足りない。ライセンス費用を見積もる際はここを忘れないこと。</p>
+<h3 id="s51"><span class="hn">4</span>Dataverse サービス保護制限と並列度 — 重要度が上がった</h3>
+<p>「ライセンスが 40,000 になったから並列度を上げれば速い」は<strong>誤り</strong>。</p>
+<p>Dataverse のサービス保護制限(5分あたり6,000リクエスト / 同時接続約20)は <strong>ライセンスと無関係に効く</strong>。上げすぎると 429 が返り、リトライが発生し、 リトライもリクエストを消費するため予算が悪化する。 <code>Apply to each</code> の並列度は 20 前後を上限とする。</p>
+<p>リクエスト予算が緩んだぶん、<strong>律速はライセンスではなくサービス保護制限側に移った</strong>。</p>
+<h3 id="s52"><span class="hn">5</span>容量がテナント共有プールになった</h3>
+<p>2 GB/環境 のハード上限は消えたが、代わりに<strong>自分で制御できない変数が増えた</strong>。 他部署が Dataverse を使い始めると容量を食い合う。 着手前に Power Platform 管理センター → リソース → 容量 で実際の空きを確認し、 定期的に監視すること。</p>
+<h3 id="s53"><span class="hn">6</span>区分マスタを7列で共有することの副作用 <span class="badge badge--checked">確認済み・要注意</span></h3>
+<p>区分表1本(5行)で7列すべてを賄えることは確認済み。ただしマスタを共有する以上、 <strong>列ごとに値域を絞ることができない</strong>。</p>
+<p>例えば <code>出荷マーク</code> に <code>単位区分</code> 用のコードを入れても、Dataverse はルックアップとして 正当なので受け付ける。「その列に入ってよい値か」の検証はどこにも存在しない。</p>
+<p>対処:</p>
+<ul><li>Excel 側の入力規則(データの入力規則 → リスト)で列ごとに候補を絞る</li><li>週次の整合性検証フロー(5-4)で、列ごとの値の分布を集計して異常値を検出する</li></ul>
+<p>列ごとに厳密な値域が必要になった時点で、区分マスタに区分種別を追加して 複合代替キー(<code>区分種別 + 区分コード</code>)へ移行する。移行は列の再作成を伴うため、 <strong>必要になる可能性が少しでもあるなら最初から複合キーにしておくほうが安い</strong>。</p>
+<h3 id="s54"><span class="hn">7</span>初期ロードと定常同期でハッシュ計算が食い違う罠</h3>
+<p>Power Query で計算したハッシュと Office Script で計算したハッシュは、 日付フォーマット・数値の丸め・空白の扱いのわずかな差で<strong>必ず食い違う</strong>。 一致させようとせず、6-1 Step 2 の「archiveはハッシュ空、currentは初回同期で埋める」方式にする。</p>
+<h3 id="s55"><span class="hn">8</span>タイムゾーン設定は後から変えられない</h3>
+<p><code>受注日</code> <code>納期</code> を「日付と時刻」型で作ってしまうと、後から「日付のみ」に変更できない。 テーブルを作り直すことになる。<strong>列を作る瞬間に決める。</strong></p>
+<h3 id="s56"><span class="hn">9</span>ポーリングトリガー自体がリクエストを消費する</h3>
+<p>Premium では最小間隔が1分になるが、<strong>1分間隔にすると1フローあたり1,440件/日</strong>を消費する。 40,000 に対しては軽いが、無意味な消費であることに変わりはない。 「即時性」の要件を確認し、15分で足りるなら15分にする。</p>
+<h3 id="s57"><span class="hn">10</span>Excel Online コネクタのファイルサイズ上限</h3>
+<p>500行×59列そのものは軽いが、条件付き書式・入力規則・過去の書式残骸が積もると数MBになる。 上限(約25MB)に近づくと予告なくエラーになる。 定期的に「未使用範囲のクリア」(Ctrl+End が最終行を大きく超えていないか)を確認する。</p>
+<h3 id="s58"><span class="hn">11</span>200ファイル構造そのものが根本的な負債</h3>
+<p>最新月しか更新しないなら、過去200ファイルをDataverseに入れる目的は「過去参照」だけ。 参照だけなら Dataverse化は過剰かもしれない(→ 代替案B)。 <strong>Premium のライセンス費用を払う理由を説明できるかどうかが、この問いの答えになる。</strong></p>
+<hr>
+<h2 id="s59"><span class="hn">10</span>代替案</h2>
+<p><strong>Power Automate Premium の決裁が取れない場合、代替案A が第一候補になる。</strong> Dataverse for Teams が廃止される以上、「Business Standard の範囲で関係データを持つ」手段は SharePoint リストしか残らない。</p>
+<h3 id="s60">代替案A — SharePoint リストを本体にする <span class="badge badge--settled">Premium 不可の場合の第一候補</span></h3>
+<ul><li>同じ標準コネクタ、フロー構造(技法1〜4)はそのまま流用できる</li><li>上限 3,000万アイテム。容量は SharePoint 側(Business Standard で 1TB + 10GB×ユーザー数)</li><li>一意制約・ルックアップ・インデックス列は持てる</li><li><strong>弱点</strong>: 5,000アイテムのリスト表示しきい値(インデックス設計で回避可能)、型が弱い、 代替キーによるUpsertが無い(GUID辞書技法は同じく使えるので実害は小さい)</li><li><strong>標準コネクタのみで動くため、Business Standard with Copilot の範囲に収まる(追加費用ゼロ)</strong></li><li>Excel 側の改修と Office Script は<strong>そのまま流用できる</strong>。切り替えが必要なのは フロー後半の Dataverse アクション(作成/更新/削除)を SharePoint アクションに差し替える部分だけ</li><li><strong>弱点の補足</strong>: 列レベルセキュリティが無いため <code>原価</code> <code>粗利益</code> を隠せない。 バックアップはごみ箱(既定93日)に依存し、Dataverse のような時点復元はできない</li></ul>
+<h3 id="s61">代替案B — Dataverse化せず、Power Query で参照する</h3>
+<ul><li>200ファイルを SharePoint に置くだけ。同期処理を一切作らない</li><li>Excel の Power Query「SharePointフォルダーから」で200ファイルを結合し、ピボットで分析</li><li><strong>同期障害ゼロ、追加コストゼロ、今日から実行可能</strong></li><li><strong>弱点</strong>: 書き込み不可、モバイル/アプリ化不可、10万行の結合更新に数分かかる</li><li><strong>目的が集計・分析だけなら、これが最善。</strong> Premium のライセンス費用を払う前に必ず検討すべき</li></ul>
+<h3 id="s62">代替案C — ローカル Access に統合DBを作る</h3>
+<ul><li>Microsoft 365 Business Standard には <strong>Access(Windows PC向け)が含まれる</strong></li><li>200ファイルをリンクテーブル/インポートで統合、SQLで自由に集計。10万行は瞬時</li><li><strong>弱点</strong>: 共有・同時実行に弱い、クラウドではない、モバイル不可</li><li><strong>単独PCでの分析用途なら、圧倒的に速く・安く・壊れにくい</strong></li></ul>
+<h3 id="s63">代替案D — Excel側を集約する(代替案というより、やるべき前処理)</h3>
+<ul><li>200ファイル → 年次12ファイル、または「最新月 + アーカイブ1ファイル」に集約</li><li>スキャン対象・保守対象・初期ロードの手間がすべて激減する</li><li>200個のファイルを維持する業務上の理由が「毎月作るから」だけなら、集約を検討する価値が高い</li></ul>
+<hr>
+<h2 id="s64"><span class="hn">11</span>今日から実践する手順</h2>
+<h3 id="s65">Day 0(今日 / 2〜3時間)</h3>
+<ol><li><strong>Power Automate Premium の決裁を取る。</strong> 取れない見込みなら、ここで代替案A(SharePoint リスト)へ 切り替える判断をする。以降の作業の大半は両案で共通なので、並行着手はしてよい</li><li><strong>Power Platform 管理センター → リソース → 容量 で Dataverse の空き容量を確認する</strong></li><li>業務システムの <code>区分表.xlsx</code> の5行を確認し、7つの区分列との対応を実データで検証する</li><li>同期専用アカウント(Business Standard + Power Automate Premium)を用意する</li><li><strong>Power Platform 管理センターで運用環境を新規作成する</strong>(Dataverse データベースを含める / 地域は Japan / 言語は日本語)</li><li>SharePoint に <code>/毎月DB/current</code> <code>/毎月DB/archive</code> <code>/毎月DB/master</code> を作成</li><li>OneDrive 同期クライアントでローカルPCにマッピング(「ファイルオンデマンド」はONのままでよい)</li></ol>
+<h3 id="s66">Day 1(半日)</h3>
+<ol><li><strong>列マッピング表を確定させる</strong>(Excel列名 / Dataverse表示名 / 論理名 / 型 / 桁)。本書 3-3 をベースに実データの最大長を測って調整する。<strong>ここを紙で固めないと後で必ず崩れる</strong></li><li>Dataverseテーブル4本を作成。作成時に必ず:</li><li>日付列は「日付のみ / タイムゾーンに依存しない」</li><li>金額列は10進数(通貨型を使わない)</li><li><strong>監査をOFF</strong></li><li><code>crfff_source_file</code> に検索インデックス</li></ol>
+<h3 id="s67">Day 2(1日)</h3>
+<ol><li>最新月ファイルを1つコピーして、テーブル化(<code>T_DB</code>)、<code>_明細行番</code> 追加、コード列を文字列書式に</li><li>Office Script を1本作成(本書 4章のコードをベースに列マッピングを埋める)</li><li><strong>10行だけのテストファイル</strong>でフロー①を通す。いきなり500行でやらない</li></ol>
+<h3 id="s68">Day 3(1日)</h3>
+<ol><li>Power Query で200ファイル → 統合CSV</li><li>make.powerapps.com からインポート(1万行×10回)</li><li>フロー④で件数検証</li></ol>
+<h3 id="s69">Day 4〜5</h3>
+<ol><li>デバウンス・サーキットブレーカー・Teams通知を追加</li><li>フロー②③④を作成</li></ol>
+<h3 id="s70">Day 6〜12(並行運用期間)</h3>
+<ol><li><strong>1週間、Excelを正としてDataverseは検証専用で運用する</strong></li><li>毎日フロー④を手動実行し、差分ゼロを確認</li><li>差分ゼロが5営業日続いたら本番運用へ</li></ol>
+<hr>
+<h2 id="s71"><span class="hn">12</span>実装チェックリスト(重要度順)</h2>
+<ul class="checks"><li><strong>Power Automate Premium の決裁が取れている</strong>(取れない場合は代替案Aへ)</li><li>Power Platform 管理センターで Dataverse の空き容量を確認した</li><li>運用環境を作成した(Dataverse データベース付き / 地域 Japan)</li><li>同期専用アカウントを用意し、Premium ライセンスを割り当てた</li><li>区分表5行と7つの区分列の対応が明らかになっている</li><li>削除サーキットブレーカーを実装した</li><li>日付列を「日付のみ / タイムゾーン非依存」で作成した</li><li>金額列を通貨型ではなく10進数で作成した</li><li>テーブルの監査をOFFにした</li><li><code>crfff_RNo</code> の論理名が <code>crfff_rno</code>(小文字)であることをフロー側で確認した</li><li>Dataverse「行を一覧表示」で <code>select</code> を指定している</li><li><code>Apply to each</code> の中にDataverseアクションが1個だけになっている</li><li>辞書(json/join)方式でGUID解決している(ループ内で検索していない)</li><li>行ハッシュによる差分判定が効いている</li><li>コード系列(<code>受注No</code> <code>手配票No</code> 含む)がテキスト書式になっている</li><li><code>~$</code> 一時ファイルをトリガー条件で除外している</li><li>デバウンス(3分)と同時実行制御(並列度1)を設定した</li><li><code>Apply to each</code> の並列度を20以下にした(サービス保護制限はライセンスと無関係)</li><li>整合性検証フロー(週次)を作った</li><li>エラー時にTeamsへ通知が飛ぶ</li><li>1週間の並行運用で差分ゼロを確認した</li></ul>
+  </main>
+</div>
+
+<script>
+(function(){
+  var links=[].slice.call(document.querySelectorAll('.rail nav a'));
+  var map={}; links.forEach(function(a){ map[a.getAttribute('href').slice(1)]=a; });
+  var heads=links.map(function(a){ return document.getElementById(a.getAttribute('href').slice(1)); })
+                 .filter(Boolean);
+  var cur=null;
+  function mark(el){ if(cur===el)return; if(cur)map[cur.id].classList.remove('on');
+                     cur=el; if(cur)map[cur.id].classList.add('on'); }
+  var io=new IntersectionObserver(function(){
+    var best=null;
+    heads.forEach(function(h){
+      var t=h.getBoundingClientRect().top;
+      if(t<140 && (!best || t>best.getBoundingClientRect().top)) best=h;
+    });
+    mark(best||heads[0]);
+  },{rootMargin:'-100px 0px -70% 0px',threshold:0});
+  heads.forEach(function(h){ io.observe(h); });
+
+  var rail=document.querySelector('.rail');
+  function fit(){ if(window.matchMedia('(max-width:1080px)').matches){ rail.open=false; }
+                  else { rail.open=true; } }
+  fit(); window.addEventListener('resize',fit);
+  links.forEach(function(a){ a.addEventListener('click',function(){
+    if(window.matchMedia('(max-width:1080px)').matches) rail.open=false; }); });
+})();
+</script>
