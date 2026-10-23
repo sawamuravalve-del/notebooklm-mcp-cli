@@ -233,9 +233,9 @@ table code{background:var(--surface3);font-size:12px}
     <header class="masthead">
       <p class="eyebrow">Design specification</p>
       <h1>毎月DB &#8644; Dataverse 同期設計書</h1>
-      <p class="lede">ローカルPC(Windows&nbsp;11)上の Excel「毎月DB」を、Microsoft&nbsp;365 Business Standard with Copilot と Power&nbsp;Automate&nbsp;Premium で Dataverse と同期する。Dataverse&nbsp;for&nbsp;Teams の廃止決定に伴う改訂版。</p>
+      <p class="lede">ローカルPC(Windows&nbsp;11)上の Excel「毎月DB」を、Microsoft&nbsp;365 Business Standard と Power&nbsp;Automate&nbsp;Premium(1ライセンス)で Dataverse と同期する。Dataverse&nbsp;for&nbsp;Teams の廃止決定に伴う改訂版。</p>
     </header>
-    <dl class="facts"><div class="fact"><dt>対象ライセンス</dt><dd>Business Standard with Copilot + Power Automate Premium</dd></div>
+    <dl class="facts"><div class="fact"><dt>対象ライセンス</dt><dd>Business Standard + Power Automate Premium x1</dd></div>
 <div class="fact"><dt>1日のリクエスト上限</dt><dd>40,000 件 / ユーザー</dd></div>
 <div class="fact"><dt>Dataverse 容量</dt><dd>テナント共有プール</dd></div>
 <div class="fact"><dt>初期投入行数</dt><dd>約 100,000 行</dd></div></dl>
@@ -250,11 +250,28 @@ table code{background:var(--surface3);font-size:12px}
 <p>Microsoft の一次情報で確認した事実。</p>
 <div class="tw"><table><thead><tr><th>確認事項</th><th>公式ドキュメントの記述</th></tr></thead><tbody><tr><td>Power Platform リクエスト上限</td><td>「Microsoft 365 apps with Power Platform access」= <strong>6,000/24h</strong>。割り当て表に <strong>Copilot の行は存在しない</strong>ため、Copilot を追加しても増えない</td></tr><tr><td>Dataverse 利用の前提</td><td>「<strong>Dataverse capacity is a prerequisite</strong> for Power Apps and Power Automate workflows to use Dataverse」</td></tr><tr><td>容量の付与元</td><td>「Every tenant with <strong>a Power Apps license</strong> gets default capacity」— Microsoft 365 ライセンスではなく Power Platform ライセンスが付与元</td></tr><tr><td>Teams 環境からの移行</td><td>「For any standalone Power Apps or <strong>Power Automate usage, which also includes Dataverse API access</strong>, the Dataverse for Teams environment <strong>needs to upgrade to Dataverse</strong>」</td></tr></tbody></table></div>
 <p>Dataverse コネクタは<strong>プレミアムコネクタ</strong>であり、Dataverse for Teams 環境内に限って付帯ライセンスで使えていた。 本格版 Dataverse に移ると、この例外から外れる。</p>
-<p>→ <strong>必要なのは Copilot ではなく <a href="https://www.microsoft.com/power-platform/products/power-automate/pricing">Power Automate Premium</a>(約 $15/ユーザー/月)。</strong></p>
-<p>これは<strong>前提3(Microsoft 365 以外の有償サービスは採用不可)に抵触する</strong>。 この1点の決裁がプロジェクトの可否を決める。</p>
+<p>→ <strong>必要なのは Copilot ではなく <a href="https://www.microsoft.com/power-platform/products/power-automate/pricing">Power Automate Premium</a>。</strong></p>
+<h4 id="s3">Power Automate Premium だけで足りるか → 足りない</h4>
+<p>Power Automate Premium 単体には <strong>Excel も SharePoint も OneDrive も Teams も含まれない</strong>。 本設計は Power Automate だけで動いているわけではなく、以下はすべて Microsoft 365 側の機能。</p>
+<div class="tw"><table><thead><tr><th>本設計が使う機能</th><th>提供元</th></tr></thead><tbody><tr><td>Excel Online (Business) コネクタ</td><td>Microsoft 365(SharePoint / OneDrive 上のファイル)</td></tr><tr><td>Office Scripts(「スクリプトの実行」)</td><td>Microsoft 365(Excel for the web)</td></tr><tr><td>SharePoint ドキュメントライブラリ</td><td>Microsoft 365</td></tr><tr><td>OneDrive 同期クライアント(ローカルPCからの経路)</td><td>Microsoft 365</td></tr><tr><td>Teams へのエラー通知</td><td>Microsoft 365</td></tr><tr><td>デスクトップ Excel + Power Query(初期ロードの200ファイル結合)</td><td>Microsoft 365 Business Standard 以上</td></tr></tbody></table></div>
+<p>→ <strong>Microsoft 365 Business Standard は引き続き必要。Power Automate Premium はその上に足す。</strong></p>
+<h4 id="s3">誰に何が必要か【重要な訂正】</h4>
+<p><strong>Power Automate Premium は全員分ではなく、1ライセンスで足りる。</strong></p>
+<div class="tw"><table><thead><tr><th>対象</th><th>必要なライセンス</th><th>根拠</th></tr></thead><tbody><tr><td><strong>同期専用アカウント ×1</strong></td><td>Microsoft 365 Business Standard + <strong>Power Automate Premium</strong></td><td>フローの所有者。Dataverse とプレミアムコネクタに Premium が要る</td></tr><tr><td>Excel を編集する担当者 ×N</td><td>Microsoft 365 Business Standard(<strong>現行のまま</strong>)</td><td><strong>Power Automate Premium は不要</strong></td></tr><tr><td>Power Apps で Dataverse を見る人(任意)</td><td>Power Apps Premium</td><td>アプリを作る場合のみ</td></tr></tbody></table></div>
+<p><strong>Copilot は誰にも不要。</strong></p>
+<p>根拠は Power Automate のライセンス規則。</p>
+<aside class="note"><p>自動フロー(スケジュール/ポーリングトリガー)は<strong>フローの所有者のコンテキストで実行される</strong>。 プレミアムコネクタを使う自動フローでは、<strong>所有者だけが Premium ライセンスを持てばよい</strong>。</p></aside>
+<p>本設計のフロー①〜④はすべて自動フロー(SharePoint のポーリングトリガー / 繰り返しトリガー)で、 同期専用アカウントが所有する。Excel を編集する担当者はフローを起動しない (トリガーは所有者が回しているポーリング)ため、ライセンスは不要。</p>
+<p><strong>この結果、現行からの追加費用は Power Automate Premium 1ライセンス分だけになる。</strong> 「全員分の Copilot + Premium」とは桁が違う。前提3の再交渉はこの数字で行うこと。</p>
+<h4 id="s3">この前提を壊す3つの操作【実装時の禁止事項】</h4>
+<ol><li><strong>手動(インスタント)トリガーのフローを作らない。</strong> 手動フローは<strong>実行したユーザーのコンテキスト</strong>で動くため、実行者全員に Premium が必要になる。 月次締めフロー②を「手動実行可」にすると、押す人にライセンスが要る。 <strong>スケジュールトリガー + サービスアカウント実行に限定すること</strong></li><li><strong>フローの共同所有者(co-owner)を増やさない。</strong> フローを編集・手動実行できる立場の人にも Premium が必要になりうる</li><li><strong>Power Apps を安易に作らない。</strong> Dataverse を参照するアプリを作ると、<strong>閲覧者全員に Power Apps Premium が必要</strong>になる。 ここが最大の隠れコスト。閲覧用途は Excel / Power BI / Power Query で代替できないか先に検討する</li></ol>
+<h4 id="s3">残る確認事項</h4>
+<p>同期専用アカウントを <strong>Business Basic(Web版のみ、より安価)</strong> に落とせるかは<strong>未確認</strong>。</p>
+<ul><li>Office Scripts の要件は「Microsoft 365 のデスクトップアプリへのアクセスを含む商用ライセンス」とされており、 Web 版のみの Business Basic は要件を満たさない可能性がある</li><li>一方で「Power Automate から Office Scripts を実行する」用途に限れば、 Web 版のみの Office 365 E1 / F3 でも可能と明記されている。Business Basic も同様に動く可能性はある</li></ul>
+<p>1アカウント分の差額なので、<strong>確証が取れるまでは Business Standard を割り当てること</strong>。</p>
 <h4 id="s3">ライセンス別の制約比較</h4>
-<div class="tw"><table><thead><tr><th>項目</th><th>Power Automate Premium あり</th><th>Business Standard + Copilot のみ</th></tr></thead><tbody><tr><td>本格版 Dataverse</td><td>使える</td><td><strong>使えない</strong></td></tr><tr><td>Power Platform リクエスト</td><td><strong>40,000</strong> / 24h / ユーザー</td><td>6,000 / 24h / ユーザー</td></tr><tr><td>Dataverse 容量</td><td>テナント既定容量 + 250 MB/ライセンス</td><td><strong>容量なし</strong></td></tr><tr><td>プレミアムコネクタ(HTTP / SQL Server / Azure系)</td><td>使える</td><td>不可</td></tr><tr><td>オンプレミスデータゲートウェイ</td><td>使える</td><td>不可</td></tr><tr><td>プラグイン / カスタムAPI</td><td>使える</td><td>不可</td></tr><tr><td>列レベルセキュリティ</td><td>使える</td><td>—</td></tr><tr><td>バックアップ / 復元 / 環境コピー</td><td>使える</td><td>—</td></tr><tr><td>ポーリングトリガー最小間隔</td><td>1分</td><td>5分</td></tr></tbody></table></div>
-<p><strong>本書は Power Automate Premium を取得した前提で以降を記述する。</strong> 取得できない場合は 10章の代替案 A(SharePoint リスト)または B(Power Query 参照)へ切り替えること。 どちらも Business Standard の範囲に収まる。</p>
+<div class="tw"><table><thead><tr><th>項目</th><th>Business Standard + Power Automate Premium</th><th>Business Standard のみ</th></tr></thead><tbody><tr><td>本格版 Dataverse</td><td>使える</td><td><strong>使えない</strong></td></tr><tr><td>Power Platform リクエスト</td><td><strong>40,000</strong> / 24h / ユーザー</td><td>6,000 / 24h / ユーザー</td></tr><tr><td>Dataverse 容量</td><td>テナント既定容量 + 250 MB/ライセンス</td><td><strong>容量なし</strong></td></tr><tr><td>プレミアムコネクタ(HTTP / SQL Server / Azure系)</td><td>使える</td><td>不可</td></tr><tr><td>オンプレミスデータゲートウェイ</td><td>使える</td><td>不可</td></tr><tr><td>プラグイン / カスタムAPI</td><td>使える</td><td>不可</td></tr><tr><td>列レベルセキュリティ</td><td>使える</td><td>—</td></tr><tr><td>バックアップ / 復元 / 環境コピー</td><td>使える</td><td>—</td></tr><tr><td>ポーリングトリガー最小間隔</td><td>1分</td><td>5分</td></tr></tbody></table></div>
+<p><strong>本書は Power Automate Premium を1ライセンス取得した前提で以降を記述する。</strong> 前提3(Microsoft 365 以外の有償サービスは採用不可)には抵触するが、追加費用は1ライセンス分に収まる。 取得できない場合は 10章の代替案 A(SharePoint リスト)または B(Power Query 参照)へ切り替えること。 どちらも Business Standard の範囲に収まる。</p>
 <h4 id="s3">変わらない制約</h4>
 <p>ライセンスを上げても以下は効き続ける。設計から外してはいけない。</p>
 <div class="tw"><table><thead><tr><th>制約</th><th>値</th><th>影響</th></tr></thead><tbody><tr><td>Dataverse サービス保護制限</td><td>5分あたり6,000リクエスト / 同時接続約20</td><td><strong>ライセンスと無関係</strong>。並列度の上限を決める</td></tr><tr><td>Excel Online (Business)</td><td>テーブル(ListObject)のみ読める / ファイルサイズ上限 約25MB / 「行を一覧表示」は既定256件</td><td>Excel側の改修が必須</td></tr><tr><td>リクエストの数え方</td><td>「トリガーのポーリング」+「アクションの実行回数」。ループ内は繰り返し回数分</td><td><code>Apply to each</code> 500回 = 500リクエスト</td></tr></tbody></table></div>
@@ -544,12 +561,12 @@ _行ハッシュ = TEXTJOIN("|",FALSE, TEXT(受注日,"yyyy-mm-dd"), TEXT(納期
 <h3 id="s45">メリット</h3>
 <ol><li><strong>リレーショナルな型・一意制約・参照整合性</strong>が効く。素のExcelでは不可能な整合性担保</li><li><strong>リクエスト消費が実変更量に比例</strong>。500行保存しても変更0なら書き込み0</li><li><strong>完全な冪等性</strong>。代替キー+ハッシュ設計により、何度流しても結果が同じ。失敗しても再実行するだけ</li><li><strong>容量のハード上限が無くなった</strong>(2 GB/環境 → テナントプール)。履歴・ログの選択肢が戻る</li><li><strong>列レベルセキュリティが使える。</strong> <code>原価</code> <code>粗利益</code> <code>利益率</code> を特定メンバーにだけ見せる運用が可能</li><li><strong>バックアップ / 復元 / 環境のコピーが使える。</strong> 本番を複製した検証環境を作れる</li><li><strong>環境が Teams のチームから独立する。</strong> チームを削除してもデータは消えない</li><li><strong>プラグイン / カスタム API</strong> でサーバー側のバリデーションと一括処理ができる</li><li><strong>プレミアムコネクタとオンプレミスデータゲートウェイ</strong>が使え、将来の拡張余地が大きい</li><li><strong>リクエスト上限が 6,000 → 40,000</strong>。大量更新や初期ロードの現実性が上がる</li><li><strong>最新月1ファイルのみ更新という業務特性が、この構成に理想的に噛み合う</strong></li></ol>
 <h3 id="s46">デメリット</h3>
-<ol><li><strong>Power Automate Premium のライセンス費用が発生する</strong>(約 $15/ユーザー/月)。<strong>前提3に抵触する</strong></li><li><strong>容量がテナント共有プールになり、他部署と食い合う。</strong> 2 GB の上限と引き換えに、 自分だけでは制御できない変数が増えた</li><li><strong>運用負荷が上がる。</strong> Power Platform 管理センター、ソリューション、DLP ポリシー、 環境のライフサイクル管理の知識が必要になる。Teams 環境は「作れば動く」だったがそうではなくなる</li><li><strong>接続の所有者が単一障害点。</strong> 所有者の退職・パスワード変更・MFA再認証で全フローが停止する</li><li><strong>Excel Online コネクタが脆い。</strong> テーブル名変更・ファイル移動・ファイルサイズ超過で即死</li><li><strong>OneDrive同期の遅延と競合。</strong> PCがスリープ/オフラインだと同期されず、競合コピーが発生しうる</li><li><strong>Excel側の改修が必須</strong>(コード列の文字列書式化)。既存業務手順に影響する</li><li><strong>障害の切り分けが5層にまたがる</strong>(Excel / OneDrive / SharePoint / Power Automate / Dataverse)</li></ol>
+<ol><li><strong>Power Automate Premium のライセンス費用が発生する</strong>(同期専用アカウント1ライセンス分)。<strong>前提3に抵触する</strong></li><li><strong>容量がテナント共有プールになり、他部署と食い合う。</strong> 2 GB の上限と引き換えに、 自分だけでは制御できない変数が増えた</li><li><strong>運用負荷が上がる。</strong> Power Platform 管理センター、ソリューション、DLP ポリシー、 環境のライフサイクル管理の知識が必要になる。Teams 環境は「作れば動く」だったがそうではなくなる</li><li><strong>接続の所有者が単一障害点。</strong> 所有者の退職・パスワード変更・MFA再認証で全フローが停止する</li><li><strong>Excel Online コネクタが脆い。</strong> テーブル名変更・ファイル移動・ファイルサイズ超過で即死</li><li><strong>OneDrive同期の遅延と競合。</strong> PCがスリープ/オフラインだと同期されず、競合コピーが発生しうる</li><li><strong>Excel側の改修が必須</strong>(コード列の文字列書式化)。既存業務手順に影響する</li><li><strong>障害の切り分けが5層にまたがる</strong>(Excel / OneDrive / SharePoint / Power Automate / Dataverse)</li></ol>
 <hr>
 <h2 id="s47"><span class="hn">9</span>見落としやすい弱点(率直な指摘)</h2>
 <p>重要度順。</p>
 <h3 id="s48"><span class="hn">1</span>ライセンス未決裁のまま設計を進めるリスク — 最大の落とし穴</h3>
-<p>本格版 Dataverse は <strong>Power Automate Premium 無しでは動かない</strong>(0-2)。 Copilot を足しても解決しない。</p>
+<p>本格版 Dataverse は <strong>Power Automate Premium 無しでは動かない</strong>(0-2)。Copilot を足しても解決しない。 ただし必要なのは<strong>同期専用アカウント1つ分だけ</strong>なので、決裁のハードルは当初の見込みより低い。</p>
 <p>この決裁が取れないまま Excel 側の改修や Office Script の実装を進めると、 <strong>作ったものが丸ごと使えなくなる</strong>。先に決裁を取るか、少なくとも 「取れなかった場合は代替案A(SharePoint リスト)へ切り替える」と決めてから着手すること。</p>
 <p>代替案Aへの切り替えはフロー構造(技法1〜4)をほぼ流用できるため、 <strong>Excel 側の改修と Office Script は無駄にならない</strong>。切り替え点はDataverseコネクタの 部分だけ。この事実が分かっていれば並行して進めてよい。</p>
 <h3 id="s49"><span class="hn">2</span>物理削除 + Excelの誤操作 = 復旧不能</h3>
@@ -559,7 +576,8 @@ _行ハッシュ = TEXTJOIN("|",FALSE, TEXT(受注日,"yyyy-mm-dd"), TEXT(納期
 <p>さらに、<strong>論理削除への変更を再検討する価値が上がった</strong>。 本格版 Dataverse では容量のハード上限が無くなったため、削除フラグ列を持つコストが 実質ゼロになっている。物理削除を選ぶ積極的な理由が「Excelと完全一致させたい」だけなら、 フロー④の整合性検証で同じ目的が達成できる。</p>
 <h3 id="s50"><span class="hn">3</span>サービスアカウントに Premium ライセンスが要る</h3>
 <p>個人アカウントでフローを作ると、その人の異動・退職・パスワード変更・MFA再認証で <strong>全フローの接続が無効化され、同期が無言で止まる</strong>。 同期専用アカウント(例: <code>svc-dbsync@...</code>)を用意するのが正しい。</p>
-<p><strong>本格版 Dataverse では、このアカウントにも Power Automate Premium が必要</strong>になる。 Business Standard 1本では足りない。ライセンス費用を見積もる際はここを忘れないこと。</p>
+<p><strong>本格版 Dataverse では、このアカウントに Power Automate Premium が必要</strong>になる。 逆に言えば、<strong>Premium が必要なのはこのアカウントだけ</strong>(0-2)。Excel を編集する担当者には不要。</p>
+<p>ただし、このアカウントが単一障害点であることは変わらない。パスワードを無期限にし、 MFA は再認証を求められない方式(証明書ベースなど)を選び、接続の有効期限を監視すること。</p>
 <h3 id="s51"><span class="hn">4</span>Dataverse サービス保護制限と並列度 — 重要度が上がった</h3>
 <p>「ライセンスが 40,000 になったから並列度を上げれば速い」は<strong>誤り</strong>。</p>
 <p>Dataverse のサービス保護制限(5分あたり6,000リクエスト / 同時接続約20)は <strong>ライセンスと無関係に効く</strong>。上げすぎると 429 が返り、リトライが発生し、 リトライもリクエストを消費するため予算が悪化する。 <code>Apply to each</code> の並列度は 20 前後を上限とする。</p>
@@ -586,7 +604,7 @@ _行ハッシュ = TEXTJOIN("|",FALSE, TEXT(受注日,"yyyy-mm-dd"), TEXT(納期
 <h2 id="s59"><span class="hn">10</span>代替案</h2>
 <p><strong>Power Automate Premium の決裁が取れない場合、代替案A が第一候補になる。</strong> Dataverse for Teams が廃止される以上、「Business Standard の範囲で関係データを持つ」手段は SharePoint リストしか残らない。</p>
 <h3 id="s60">代替案A — SharePoint リストを本体にする <span class="badge badge--settled">Premium 不可の場合の第一候補</span></h3>
-<ul><li>同じ標準コネクタ、フロー構造(技法1〜4)はそのまま流用できる</li><li>上限 3,000万アイテム。容量は SharePoint 側(Business Standard で 1TB + 10GB×ユーザー数)</li><li>一意制約・ルックアップ・インデックス列は持てる</li><li><strong>弱点</strong>: 5,000アイテムのリスト表示しきい値(インデックス設計で回避可能)、型が弱い、 代替キーによるUpsertが無い(GUID辞書技法は同じく使えるので実害は小さい)</li><li><strong>標準コネクタのみで動くため、Business Standard with Copilot の範囲に収まる(追加費用ゼロ)</strong></li><li>Excel 側の改修と Office Script は<strong>そのまま流用できる</strong>。切り替えが必要なのは フロー後半の Dataverse アクション(作成/更新/削除)を SharePoint アクションに差し替える部分だけ</li><li><strong>弱点の補足</strong>: 列レベルセキュリティが無いため <code>原価</code> <code>粗利益</code> を隠せない。 バックアップはごみ箱(既定93日)に依存し、Dataverse のような時点復元はできない</li></ul>
+<ul><li>同じ標準コネクタ、フロー構造(技法1〜4)はそのまま流用できる</li><li>上限 3,000万アイテム。容量は SharePoint 側(Business Standard で 1TB + 10GB×ユーザー数)</li><li>一意制約・ルックアップ・インデックス列は持てる</li><li><strong>弱点</strong>: 5,000アイテムのリスト表示しきい値(インデックス設計で回避可能)、型が弱い、 代替キーによるUpsertが無い(GUID辞書技法は同じく使えるので実害は小さい)</li><li><strong>標準コネクタのみで動くため、Business Standard の範囲に収まる(追加費用ゼロ)</strong></li><li>Excel 側の改修と Office Script は<strong>そのまま流用できる</strong>。切り替えが必要なのは フロー後半の Dataverse アクション(作成/更新/削除)を SharePoint アクションに差し替える部分だけ</li><li><strong>弱点の補足</strong>: 列レベルセキュリティが無いため <code>原価</code> <code>粗利益</code> を隠せない。 バックアップはごみ箱(既定93日)に依存し、Dataverse のような時点復元はできない</li></ul>
 <h3 id="s61">代替案B — Dataverse化せず、Power Query で参照する</h3>
 <ul><li>200ファイルを SharePoint に置くだけ。同期処理を一切作らない</li><li>Excel の Power Query「SharePointフォルダーから」で200ファイルを結合し、ピボットで分析</li><li><strong>同期障害ゼロ、追加コストゼロ、今日から実行可能</strong></li><li><strong>弱点</strong>: 書き込み不可、モバイル/アプリ化不可、10万行の結合更新に数分かかる</li><li><strong>目的が集計・分析だけなら、これが最善。</strong> Premium のライセンス費用を払う前に必ず検討すべき</li></ul>
 <h3 id="s62">代替案C — ローカル Access に統合DBを作る</h3>
@@ -596,7 +614,7 @@ _行ハッシュ = TEXTJOIN("|",FALSE, TEXT(受注日,"yyyy-mm-dd"), TEXT(納期
 <hr>
 <h2 id="s64"><span class="hn">11</span>今日から実践する手順</h2>
 <h3 id="s65">Day 0(今日 / 2〜3時間)</h3>
-<ol><li><strong>Power Automate Premium の決裁を取る。</strong> 取れない見込みなら、ここで代替案A(SharePoint リスト)へ 切り替える判断をする。以降の作業の大半は両案で共通なので、並行着手はしてよい</li><li><strong>Power Platform 管理センター → リソース → 容量 で Dataverse の空き容量を確認する</strong></li><li>業務システムの <code>区分表.xlsx</code> の5行を確認し、7つの区分列との対応を実データで検証する</li><li>同期専用アカウント(Business Standard + Power Automate Premium)を用意する</li><li><strong>Power Platform 管理センターで運用環境を新規作成する</strong>(Dataverse データベースを含める / 地域は Japan / 言語は日本語)</li><li>SharePoint に <code>/毎月DB/current</code> <code>/毎月DB/archive</code> <code>/毎月DB/master</code> を作成</li><li>OneDrive 同期クライアントでローカルPCにマッピング(「ファイルオンデマンド」はONのままでよい)</li></ol>
+<ol><li><strong>Power Automate Premium 1ライセンスの決裁を取る。</strong> 全員分ではない(0-2)。 取れない見込みなら、ここで代替案A(SharePoint リスト)へ切り替える判断をする。 以降の作業の大半は両案で共通なので、並行着手はしてよい</li><li><strong>Power Platform 管理センター → リソース → 容量 で Dataverse の空き容量を確認する</strong></li><li>業務システムの <code>区分表.xlsx</code> の5行を確認し、7つの区分列との対応を実データで検証する</li><li>同期専用アカウント(Business Standard + Power Automate Premium ×1)を用意する</li><li><strong>Power Platform 管理センターで運用環境を新規作成する</strong>(Dataverse データベースを含める / 地域は Japan / 言語は日本語)</li><li>SharePoint に <code>/毎月DB/current</code> <code>/毎月DB/archive</code> <code>/毎月DB/master</code> を作成</li><li>OneDrive 同期クライアントでローカルPCにマッピング(「ファイルオンデマンド」はONのままでよい)</li></ol>
 <h3 id="s66">Day 1(半日)</h3>
 <ol><li><strong>列マッピング表を確定させる</strong>(Excel列名 / Dataverse表示名 / 論理名 / 型 / 桁)。本書 3-3 をベースに実データの最大長を測って調整する。<strong>ここを紙で固めないと後で必ず崩れる</strong></li><li>Dataverseテーブル4本を作成。作成時に必ず:</li><li>日付列は「日付のみ / タイムゾーンに依存しない」</li><li>金額列は10進数(通貨型を使わない)</li><li><strong>監査をOFF</strong></li><li><code>crfff_source_file</code> に検索インデックス</li></ol>
 <h3 id="s67">Day 2(1日)</h3>
@@ -609,7 +627,7 @@ _行ハッシュ = TEXTJOIN("|",FALSE, TEXT(受注日,"yyyy-mm-dd"), TEXT(納期
 <ol><li><strong>1週間、Excelを正としてDataverseは検証専用で運用する</strong></li><li>毎日フロー④を手動実行し、差分ゼロを確認</li><li>差分ゼロが5営業日続いたら本番運用へ</li></ol>
 <hr>
 <h2 id="s71"><span class="hn">12</span>実装チェックリスト(重要度順)</h2>
-<ul class="checks"><li><strong>Power Automate Premium の決裁が取れている</strong>(取れない場合は代替案Aへ)</li><li>Power Platform 管理センターで Dataverse の空き容量を確認した</li><li>運用環境を作成した(Dataverse データベース付き / 地域 Japan)</li><li>同期専用アカウントを用意し、Premium ライセンスを割り当てた</li><li>区分表5行と7つの区分列の対応が明らかになっている</li><li>削除サーキットブレーカーを実装した</li><li>日付列を「日付のみ / タイムゾーン非依存」で作成した</li><li>金額列を通貨型ではなく10進数で作成した</li><li>テーブルの監査をOFFにした</li><li><code>crfff_RNo</code> の論理名が <code>crfff_rno</code>(小文字)であることをフロー側で確認した</li><li>Dataverse「行を一覧表示」で <code>select</code> を指定している</li><li><code>Apply to each</code> の中にDataverseアクションが1個だけになっている</li><li>辞書(json/join)方式でGUID解決している(ループ内で検索していない)</li><li>行ハッシュによる差分判定が効いている</li><li>コード系列(<code>受注No</code> <code>手配票No</code> 含む)がテキスト書式になっている</li><li><code>~$</code> 一時ファイルをトリガー条件で除外している</li><li>デバウンス(3分)と同時実行制御(並列度1)を設定した</li><li><code>Apply to each</code> の並列度を20以下にした(サービス保護制限はライセンスと無関係)</li><li>整合性検証フロー(週次)を作った</li><li>エラー時にTeamsへ通知が飛ぶ</li><li>1週間の並行運用で差分ゼロを確認した</li></ul>
+<ul class="checks"><li><strong>Power Automate Premium 1ライセンスの決裁が取れている</strong>(全員分ではない。取れない場合は代替案Aへ)</li><li>Power Platform 管理センターで Dataverse の空き容量を確認した</li><li>運用環境を作成した(Dataverse データベース付き / 地域 Japan)</li><li>同期専用アカウントを用意し、Premium ライセンスを割り当てた</li><li><strong>手動(インスタント)トリガーのフローを作っていない</strong>(実行者全員に Premium が必要になる)</li><li>フローの共同所有者を増やしていない</li><li>区分表5行と7つの区分列の対応が明らかになっている</li><li>削除サーキットブレーカーを実装した</li><li>日付列を「日付のみ / タイムゾーン非依存」で作成した</li><li>金額列を通貨型ではなく10進数で作成した</li><li>テーブルの監査をOFFにした</li><li><code>crfff_RNo</code> の論理名が <code>crfff_rno</code>(小文字)であることをフロー側で確認した</li><li>Dataverse「行を一覧表示」で <code>select</code> を指定している</li><li><code>Apply to each</code> の中にDataverseアクションが1個だけになっている</li><li>辞書(json/join)方式でGUID解決している(ループ内で検索していない)</li><li>行ハッシュによる差分判定が効いている</li><li>コード系列(<code>受注No</code> <code>手配票No</code> 含む)がテキスト書式になっている</li><li><code>~$</code> 一時ファイルをトリガー条件で除外している</li><li>デバウンス(3分)と同時実行制御(並列度1)を設定した</li><li><code>Apply to each</code> の並列度を20以下にした(サービス保護制限はライセンスと無関係)</li><li>整合性検証フロー(週次)を作った</li><li>エラー時にTeamsへ通知が飛ぶ</li><li>1週間の並行運用で差分ゼロを確認した</li></ul>
   </main>
 </div>
 

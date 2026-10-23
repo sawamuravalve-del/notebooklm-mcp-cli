@@ -1,9 +1,10 @@
 # 毎月DB(Excel) ⇔ Dataverse 同期設計書
 
-対象: ローカルPC(Windows 11)上の Excel「毎月DB」を、Microsoft 365 Business Standard with Copilot と Power Automate Premium で Dataverse と同期する。入力・同期はいずれも Power Automate で行う。
+対象: ローカルPC(Windows 11)上の Excel「毎月DB」を、Microsoft 365 Business Standard と Power Automate Premium(1ライセンス)で Dataverse と同期する。入力・同期はいずれも Power Automate で行う。
 
 > **Dataverse for Teams の廃止決定(2027-10-30 撤去)に伴い、本格版 Dataverse を前提とする構成に改訂した。**
-> この変更により **Power Automate Premium が必須**になる。詳細と根拠は 0-2 を参照。
+> この変更により **Power Automate Premium が必須**になる。ただし必要なのは**同期専用アカウント1つ分だけ**で、
+> Copilot は不要。詳細と根拠は 0-2 を参照。
 
 ---
 
@@ -44,14 +45,74 @@ Microsoft の一次情報で確認した事実。
 Dataverse コネクタは**プレミアムコネクタ**であり、Dataverse for Teams 環境内に限って付帯ライセンスで使えていた。
 本格版 Dataverse に移ると、この例外から外れる。
 
-→ **必要なのは Copilot ではなく [Power Automate Premium](https://www.microsoft.com/power-platform/products/power-automate/pricing)(約 $15/ユーザー/月)。**
+→ **必要なのは Copilot ではなく [Power Automate Premium](https://www.microsoft.com/power-platform/products/power-automate/pricing)。**
 
-これは**前提3(Microsoft 365 以外の有償サービスは採用不可)に抵触する**。
-この1点の決裁がプロジェクトの可否を決める。
+#### Power Automate Premium だけで足りるか → 足りない
+
+Power Automate Premium 単体には **Excel も SharePoint も OneDrive も Teams も含まれない**。
+本設計は Power Automate だけで動いているわけではなく、以下はすべて Microsoft 365 側の機能。
+
+| 本設計が使う機能 | 提供元 |
+|---|---|
+| Excel Online (Business) コネクタ | Microsoft 365(SharePoint / OneDrive 上のファイル) |
+| Office Scripts(「スクリプトの実行」) | Microsoft 365(Excel for the web) |
+| SharePoint ドキュメントライブラリ | Microsoft 365 |
+| OneDrive 同期クライアント(ローカルPCからの経路) | Microsoft 365 |
+| Teams へのエラー通知 | Microsoft 365 |
+| デスクトップ Excel + Power Query(初期ロードの200ファイル結合) | Microsoft 365 Business Standard 以上 |
+
+→ **Microsoft 365 Business Standard は引き続き必要。Power Automate Premium はその上に足す。**
+
+#### 誰に何が必要か【重要な訂正】
+
+**Power Automate Premium は全員分ではなく、1ライセンスで足りる。**
+
+| 対象 | 必要なライセンス | 根拠 |
+|---|---|---|
+| **同期専用アカウント ×1** | Microsoft 365 Business Standard + **Power Automate Premium** | フローの所有者。Dataverse とプレミアムコネクタに Premium が要る |
+| Excel を編集する担当者 ×N | Microsoft 365 Business Standard(**現行のまま**) | **Power Automate Premium は不要** |
+| Power Apps で Dataverse を見る人(任意) | Power Apps Premium | アプリを作る場合のみ |
+
+**Copilot は誰にも不要。**
+
+根拠は Power Automate のライセンス規則。
+
+> 自動フロー(スケジュール/ポーリングトリガー)は**フローの所有者のコンテキストで実行される**。
+> プレミアムコネクタを使う自動フローでは、**所有者だけが Premium ライセンスを持てばよい**。
+
+本設計のフロー①〜④はすべて自動フロー(SharePoint のポーリングトリガー / 繰り返しトリガー)で、
+同期専用アカウントが所有する。Excel を編集する担当者はフローを起動しない
+(トリガーは所有者が回しているポーリング)ため、ライセンスは不要。
+
+**この結果、現行からの追加費用は Power Automate Premium 1ライセンス分だけになる。**
+「全員分の Copilot + Premium」とは桁が違う。前提3の再交渉はこの数字で行うこと。
+
+#### この前提を壊す3つの操作【実装時の禁止事項】
+
+1. **手動(インスタント)トリガーのフローを作らない。**
+   手動フローは**実行したユーザーのコンテキスト**で動くため、実行者全員に Premium が必要になる。
+   月次締めフロー②を「手動実行可」にすると、押す人にライセンスが要る。
+   **スケジュールトリガー + サービスアカウント実行に限定すること**
+2. **フローの共同所有者(co-owner)を増やさない。**
+   フローを編集・手動実行できる立場の人にも Premium が必要になりうる
+3. **Power Apps を安易に作らない。**
+   Dataverse を参照するアプリを作ると、**閲覧者全員に Power Apps Premium が必要**になる。
+   ここが最大の隠れコスト。閲覧用途は Excel / Power BI / Power Query で代替できないか先に検討する
+
+#### 残る確認事項
+
+同期専用アカウントを **Business Basic(Web版のみ、より安価)** に落とせるかは**未確認**。
+
+- Office Scripts の要件は「Microsoft 365 のデスクトップアプリへのアクセスを含む商用ライセンス」とされており、
+  Web 版のみの Business Basic は要件を満たさない可能性がある
+- 一方で「Power Automate から Office Scripts を実行する」用途に限れば、
+  Web 版のみの Office 365 E1 / F3 でも可能と明記されている。Business Basic も同様に動く可能性はある
+
+1アカウント分の差額なので、**確証が取れるまでは Business Standard を割り当てること**。
 
 #### ライセンス別の制約比較
 
-| 項目 | Power Automate Premium あり | Business Standard + Copilot のみ |
+| 項目 | Business Standard + Power Automate Premium | Business Standard のみ |
 |---|---|---|
 | 本格版 Dataverse | 使える | **使えない** |
 | Power Platform リクエスト | **40,000** / 24h / ユーザー | 6,000 / 24h / ユーザー |
@@ -63,7 +124,8 @@ Dataverse コネクタは**プレミアムコネクタ**であり、Dataverse fo
 | バックアップ / 復元 / 環境コピー | 使える | — |
 | ポーリングトリガー最小間隔 | 1分 | 5分 |
 
-**本書は Power Automate Premium を取得した前提で以降を記述する。**
+**本書は Power Automate Premium を1ライセンス取得した前提で以降を記述する。**
+前提3(Microsoft 365 以外の有償サービスは採用不可)には抵触するが、追加費用は1ライセンス分に収まる。
 取得できない場合は 10章の代替案 A(SharePoint リスト)または B(Power Query 参照)へ切り替えること。
 どちらも Business Standard の範囲に収まる。
 
@@ -833,7 +895,7 @@ Excel を新規作成 → データ → データの取得 → ファイルか�
 
 ### デメリット
 
-1. **Power Automate Premium のライセンス費用が発生する**(約 $15/ユーザー/月)。**前提3に抵触する**
+1. **Power Automate Premium のライセンス費用が発生する**(同期専用アカウント1ライセンス分)。**前提3に抵触する**
 2. **容量がテナント共有プールになり、他部署と食い合う。** 2 GB の上限と引き換えに、
    自分だけでは制御できない変数が増えた
 3. **運用負荷が上がる。** Power Platform 管理センター、ソリューション、DLP ポリシー、
@@ -853,8 +915,8 @@ Excel を新規作成 → データ → データの取得 → ファイルか�
 
 ### 1. ライセンス未決裁のまま設計を進めるリスク — 最大の落とし穴
 
-本格版 Dataverse は **Power Automate Premium 無しでは動かない**(0-2)。
-Copilot を足しても解決しない。
+本格版 Dataverse は **Power Automate Premium 無しでは動かない**(0-2)。Copilot を足しても解決しない。
+ただし必要なのは**同期専用アカウント1つ分だけ**なので、決裁のハードルは当初の見込みより低い。
 
 この決裁が取れないまま Excel 側の改修や Office Script の実装を進めると、
 **作ったものが丸ごと使えなくなる**。先に決裁を取るか、少なくとも
@@ -886,8 +948,11 @@ Copilot を足しても解決しない。
 **全フローの接続が無効化され、同期が無言で止まる**。
 同期専用アカウント(例: `svc-dbsync@...`)を用意するのが正しい。
 
-**本格版 Dataverse では、このアカウントにも Power Automate Premium が必要**になる。
-Business Standard 1本では足りない。ライセンス費用を見積もる際はここを忘れないこと。
+**本格版 Dataverse では、このアカウントに Power Automate Premium が必要**になる。
+逆に言えば、**Premium が必要なのはこのアカウントだけ**(0-2)。Excel を編集する担当者には不要。
+
+ただし、このアカウントが単一障害点であることは変わらない。パスワードを無期限にし、
+MFA は再認証を求められない方式(証明書ベースなど)を選び、接続の有効期限を監視すること。
 
 ### 4. Dataverse サービス保護制限と並列度 — 重要度が上がった
 
@@ -967,7 +1032,7 @@ SharePoint リストしか残らない。
 - 上限 3,000万アイテム。容量は SharePoint 側(Business Standard で 1TB + 10GB×ユーザー数)
 - 一意制約・ルックアップ・インデックス列は持てる
 - **弱点**: 5,000アイテムのリスト表示しきい値(インデックス設計で回避可能)、型が弱い、 代替キーによるUpsertが無い(GUID辞書技法は同じく使えるので実害は小さい)
-- **標準コネクタのみで動くため、Business Standard with Copilot の範囲に収まる(追加費用ゼロ)**
+- **標準コネクタのみで動くため、Business Standard の範囲に収まる(追加費用ゼロ)**
 - Excel 側の改修と Office Script は**そのまま流用できる**。切り替えが必要なのは
   フロー後半の Dataverse アクション(作成/更新/削除)を SharePoint アクションに差し替える部分だけ
 - **弱点の補足**: 列レベルセキュリティが無いため `原価` `粗利益` を隠せない。
@@ -1000,11 +1065,12 @@ SharePoint リストしか残らない。
 
 ### Day 0(今日 / 2〜3時間)
 
-1. **Power Automate Premium の決裁を取る。** 取れない見込みなら、ここで代替案A(SharePoint リスト)へ
-   切り替える判断をする。以降の作業の大半は両案で共通なので、並行着手はしてよい
+1. **Power Automate Premium 1ライセンスの決裁を取る。** 全員分ではない(0-2)。
+   取れない見込みなら、ここで代替案A(SharePoint リスト)へ切り替える判断をする。
+   以降の作業の大半は両案で共通なので、並行着手はしてよい
 2. **Power Platform 管理センター → リソース → 容量 で Dataverse の空き容量を確認する**
 3. 業務システムの `区分表.xlsx` の5行を確認し、7つの区分列との対応を実データで検証する
-4. 同期専用アカウント(Business Standard + Power Automate Premium)を用意する
+4. 同期専用アカウント(Business Standard + Power Automate Premium ×1)を用意する
 5. **Power Platform 管理センターで運用環境を新規作成する**(Dataverse データベースを含める / 地域は Japan / 言語は日本語)
 6. SharePoint に `/毎月DB/current` `/毎月DB/archive` `/毎月DB/master` を作成
 7. OneDrive 同期クライアントでローカルPCにマッピング(「ファイルオンデマンド」はONのままでよい)
@@ -1045,10 +1111,12 @@ SharePoint リストしか残らない。
 
 ## 12. 実装チェックリスト(重要度順)
 
-- [ ] **Power Automate Premium の決裁が取れている**(取れない場合は代替案Aへ)
+- [ ] **Power Automate Premium 1ライセンスの決裁が取れている**(全員分ではない。取れない場合は代替案Aへ)
 - [ ] Power Platform 管理センターで Dataverse の空き容量を確認した
 - [ ] 運用環境を作成した(Dataverse データベース付き / 地域 Japan)
 - [ ] 同期専用アカウントを用意し、Premium ライセンスを割り当てた
+- [ ] **手動(インスタント)トリガーのフローを作っていない**(実行者全員に Premium が必要になる)
+- [ ] フローの共同所有者を増やしていない
 - [ ] 区分表5行と7つの区分列の対応が明らかになっている
 - [ ] 削除サーキットブレーカーを実装した
 - [ ] 日付列を「日付のみ / タイムゾーン非依存」で作成した
