@@ -239,13 +239,14 @@ table code{background:var(--surface3);font-size:12px}
 <p>Dataflow は Power Automate のフローではなく <strong>Power Platform のデータ統合機能</strong>であるため、 Power Automate のライセンス体系（「アプリのコンテキスト内」制約を含む）が適用されない。</p>
 <h4 id="s4">プラン別のコスト</h4>
 <div class="tw"><table><thead><tr><th>プラン</th><th>単価(US定価の目安)</th><th>3人分</th><th>備考</th></tr></thead><tbody><tr><td><strong>Power Apps per app</strong></td><td>$5 / ユーザー / アプリ</td><td><strong>$15 / 月</strong></td><td><strong>新規販売終了の可能性あり。要確認</strong></td></tr><tr><td>Power Apps Premium</td><td>$20 / ユーザー</td><td>$60 / 月</td><td>確実に購入できる</td></tr><tr><td>Power Apps pay-as-you-go</td><td>$10 / アクティブユーザー</td><td>最大 $30 / 月</td><td><strong>Azure サブスクリプションが別途必要</strong></td></tr></tbody></table></div>
-<aside class="note"><p><strong>着手前の必須確認</strong>: per app プランは 2026年1月頃に新規販売を終了したとの情報と、 現在も $5 で提供されているとの情報が食い違っている。 <strong>年額で $540 の差</strong>になるため、リセラーまたは Microsoft に1件問い合わせること。</p></aside>
+<aside class="note"><p><strong>本件では Power Apps Premium に加入済みのため、この比較は決着している</strong>(0-4)。 上表は、将来ライセンスを見直す際の参考として残す。</p></aside>
 <h4 id="s4">モデル駆動アプリは常にプレミアム扱い</h4>
 <p>モデル駆動アプリは Dataverse 上で動くため、<strong>Microsoft 365 付帯ライセンスでは作ることも使うこともできない</strong>。 ここに選択の余地はない。per app か Premium のいずれかが、作る人と使う人の全員に必要。</p>
 <h3 id="s4"><span class="hn">0-4</span>確認済み事項</h3>
-<div class="tw"><table><thead><tr><th>項目</th><th>確認結果</th></tr></thead><tbody><tr><td>区分表(5行2列)が7つの区分列すべてを賄えるか</td><td><strong>賄える。マスタ1本で足りる</strong></td></tr><tr><td><code>手配票No</code> に空欄の行があるか</td><td><strong>存在しない</strong></td></tr><tr><td>Dataverse for Teams の廃止</td><td>作成停止 2026-11-15 / 停止 2027-09-15 / 撤去 2027-10-30</td></tr></tbody></table></div>
+<div class="tw"><table><thead><tr><th>項目</th><th>確認結果</th></tr></thead><tbody><tr><td>区分表(5行2列)が7つの区分列すべてを賄えるか</td><td><strong>賄える。マスタ1本で足りる</strong></td></tr><tr><td><code>手配票No</code> に空欄の行があるか</td><td><strong>存在しない</strong></td></tr><tr><td>Dataverse for Teams の廃止</td><td>作成停止 2026-11-15 / 停止 2027-09-15 / 撤去 2027-10-30</td></tr><tr><td><strong>Power Apps のライセンス</strong></td><td><strong>Power Apps Premium に加入済み。</strong> per app の購入可否を問う必要は無くなった</td></tr><tr><td><strong>Dataverse の空き容量</strong></td><td><strong>問題なし。</strong> Premium 加入によりテナント既定容量(一般に10GB)が使え、本設計の200〜250MBに対して十分</td></tr><tr><td><strong>Dataverse の既存データ</strong></td><td><strong>無し。</strong> 空の状態から構築できるため、移行・統合の考慮が不要</td></tr></tbody></table></div>
 <h3 id="s5"><span class="hn">0-5</span>未確定・要確認事項</h3>
-<div class="tw"><table><thead><tr><th>#</th><th>項目</th><th>緊急度</th><th>必要な理由</th></tr></thead><tbody><tr><td>1</td><td><strong>Power Apps per app プランが購入可能か</strong></td><td>高</td><td>年 $540 の差</td></tr><tr><td>2</td><td><strong>Dataverse の空き容量</strong>(Power Platform 管理センター → リソース → 容量)</td><td>高</td><td>本設計は 200〜250MB を消費。per app は +50MB/ライセンスしか増えない</td></tr><tr><td>3</td><td>最新月ファイルの切替タイミング(締め日)</td><td>中</td><td>月次のファイル配置運用に影響</td></tr><tr><td>4</td><td><code>受注数</code> <code>箱数</code> <code>入数</code> に小数が入るか</td><td>中</td><td>整数型 vs 10進数型の判断</td></tr><tr><td>5</td><td>モバイルから使うか</td><td>低</td><td>使うならモデル駆動アプリのモバイル設定が必要</td></tr></tbody></table></div>
+<div class="tw"><table><thead><tr><th>#</th><th>項目</th><th>緊急度</th><th>必要な理由</th></tr></thead><tbody><tr><td>1</td><td><strong>発行者プレフィックスを決める</strong></td><td><strong>最高</strong></td><td><strong>後から変更できない。</strong> テーブル作成の直前に確定させる(9章 Day 2)</td></tr><tr><td>2</td><td>検索する人数分の Power Apps Premium が確保されているか</td><td>中</td><td>利用者1人につき1ライセンス。作る人と使う人が同じなら兼用できる</td></tr><tr><td>3</td><td>最新月ファイルの切替タイミング(締め日)</td><td>低</td><td>月次のファイル配置運用。後から調整できる</td></tr><tr><td>4</td><td>モバイルから使うか</td><td>低</td><td>使うならモデル駆動アプリのモバイル設定が必要</td></tr></tbody></table></div>
+<aside class="note"><p><code>受注数</code> <code>箱数</code> <code>入数</code> の小数有無は<strong>確認不要</strong>。10進数(精度3)は整数値もそのまま保持するため、 どちらでも支障がない。表示上の桁だけビューの書式で調整する。</p></aside>
 <hr>
 <h2 id="s6"><span class="hn">1</span>全体構成</h2>
 <div class="code"><pre><code>[ローカルPC Windows 11]
@@ -292,7 +293,7 @@ table code{background:var(--surface3);font-size:12px}
 <p>将来、原価も見たくなった場合は列を足すだけでよく、作り直しにはならない。</p>
 <h4 id="s12">適用先</h4>
 <div class="tw"><table><thead><tr><th>対象</th><th>適用</th></tr></thead><tbody><tr><td><strong>代替案A(Excel ブック)</strong></td><td>この11列だけを読み込む。100,000行 × 11列 ≒ 110万セル</td></tr><tr><td><strong>モデル駆動アプリの既定ビュー</strong></td><td>この11列を表示列にする(5-2)</td></tr><tr><td><strong>Dataverse テーブル本体</strong></td><td>59列すべてを保持する(3-3)。表示しないだけ</td></tr></tbody></table></div>
-<aside class="note"><p><strong>容量が逼迫する場合の選択肢。</strong> Dataverse テーブル自体を11列に絞ると、1行あたり約2.0〜2.5KB → <strong>約1.0〜1.2KB</strong> になり、 100,000行で <strong>200〜250MB → 100〜120MB</strong> と半減する。 per app ライセンス(+50MB/本)を選ぶ場合、この差が成否を分ける可能性がある(3-7)。 ただし「後から他の列も見たくなる」余地は失われるため、容量を実測してから判断すること。</p></aside>
+<aside class="note"><p><strong>テーブル本体は59列のまま保持する。</strong> Power Apps Premium 加入によりテナント既定容量が使えるため、200〜250MB は問題にならない(0-4)。 「後から他の列も見たくなる」余地を残すほうが価値が高い。 将来、容量が逼迫した場合は11列に絞ることで約半分(100〜120MB)にできる。</p></aside>
 <h3 id="s12"><span class="hn">2-4</span>アーカイブの集約 <span class="badge badge--checked">強く推奨</span></h3>
 <p>200ファイルを毎回読むと、Dataflow の更新に数十分かかる。 <strong>年次12ファイル(または1ファイル)に集約</strong>すると、更新が大幅に短縮される。</p>
 <p>集約は一度きりの作業で、Power Query で結合して出力するだけ。<strong>構築の最初にやる価値がある。</strong></p>
@@ -492,11 +493,12 @@ DupCheck = if Table.RowCount(Table.Distinct(Cleaned, {"crfff_sync_key"}))
 <hr>
 <h2 id="s48"><span class="hn">9</span>構築手順</h2>
 <h3 id="s49">Day 0 — 確認(着手前に必須)</h3>
-<div class="code"><pre><code>1. Power Apps per app プランが購入可能か、リセラーまたは Microsoft に確認
-2. Power Platform 管理センター → リソース → 容量 で Dataverse の空きを確認
-3. 専用アカウントを用意し、Power Apps ライセンスを割り当てる
-4. Power Platform 管理センターで運用環境を作成
+<div class="code"><pre><code>1. 専用アカウントを用意し、Power Apps Premium を割り当てる
+     （Dataflow の所有者になる。個人アカウントで所有しないこと）
+2. 検索する人数分の Power Apps Premium が確保されているか確認
+3. Power Platform 管理センターで運用環境を作成
      （Dataverse データベースを含める / 地域 Japan / 言語 日本語）</code></pre></div>
+<aside class="note"><p>ライセンスと容量の確認は完了済み(0-4)。残る確定事項は<strong>発行者プレフィックス</strong>だけで、 これは Day 2 の冒頭で決める。</p></aside>
 <h3 id="s50">Day 1 — Excel 側の準備</h3>
 <div class="code"><pre><code>5. SharePoint に /毎月DB/current /archive /master を作成
 6. OneDrive 同期クライアントでローカルPCにマッピング
@@ -526,7 +528,7 @@ DupCheck = if Table.RowCount(Table.Distinct(Cleaned, {"crfff_sync_key"}))
 <p><strong>手順14が最も重要。</strong> 10行で通してから広げること。 10万行でいきなり試すと、1か所の型の不一致で数十分待たされる。</p>
 <hr>
 <h2 id="s55"><span class="hn">10</span>実装チェックリスト</h2>
-<ul class="checks"><li>Power Apps per app プランの購入可否を確認した</li><li>Dataverse の空き容量を確認した</li><li>専用アカウントに Power Apps ライセンスを割り当てた</li><li>発行者プレフィックスを決めた(後から変更不可)</li><li>日付列を「日付のみ / タイムゾーン非依存」で作成した</li><li>金額列を通貨型ではなく10進数で作成した</li><li>テーブルの監査をOFFにした</li><li>代替キー <code>crfff_sync_key</code> を設定した</li><li>検索対象列にインデックスを設定した</li><li><code>crfff_RNo</code> の論理名が <code>crfff_rno</code>(小文字)であることを確認した</li><li>コード系列(<code>受注No</code> <code>手配票No</code> 含む)がテキスト書式になっている</li><li>Power Query の自動型検出を無効にした</li><li><code>Kind = "Sheet"</code> でワークシートを読んでいる</li><li>一時ファイル <code>~$*.xlsx</code> を除外している</li><li>10行のテストファイルで Dataflow を通した</li><li>「クエリ出力に存在しない行を削除する」を有効にした</li><li>更新スケジュールを設定した</li><li>Dataverse 検索を有効化した</li><li><strong>キャンバスアプリではなくモデル駆動アプリで作った</strong></li><li>アーカイブを年次ファイルに集約した</li><li>1週間の並行運用で差分ゼロを確認した</li></ul>
+<ul class="checks"><li>専用アカウントに Power Apps Premium を割り当てた（Dataflow の所有者）</li><li>検索する人数分の Power Apps Premium を確保した</li><li>発行者プレフィックスを決めた(後から変更不可)</li><li>日付列を「日付のみ / タイムゾーン非依存」で作成した</li><li>金額列を通貨型ではなく10進数で作成した</li><li>テーブルの監査をOFFにした</li><li>代替キー <code>crfff_sync_key</code> を設定した</li><li>検索対象列にインデックスを設定した</li><li><code>crfff_RNo</code> の論理名が <code>crfff_rno</code>(小文字)であることを確認した</li><li>コード系列(<code>受注No</code> <code>手配票No</code> 含む)がテキスト書式になっている</li><li>Power Query の自動型検出を無効にした</li><li><code>Kind = "Sheet"</code> でワークシートを読んでいる</li><li>一時ファイル <code>~$*.xlsx</code> を除外している</li><li>10行のテストファイルで Dataflow を通した</li><li>「クエリ出力に存在しない行を削除する」を有効にした</li><li>更新スケジュールを設定した</li><li>Dataverse 検索を有効化した</li><li><strong>キャンバスアプリではなくモデル駆動アプリで作った</strong></li><li>アーカイブを年次ファイルに集約した</li><li>1週間の並行運用で差分ゼロを確認した</li></ul>
 <hr>
 <h2 id="s56"><span class="hn">11</span>初版からの変更点</h2>
 <div class="tw"><table><thead><tr><th>項目</th><th>初版</th><th><strong>第2版</strong></th></tr></thead><tbody><tr><td>基盤</td><td>Dataverse for Teams</td><td><strong>Dataverse</strong>(廃止に伴う移行)</td></tr><tr><td>用途</td><td>未定義</td><td><strong>引合検索(1〜3人)</strong></td></tr><tr><td>取り込み</td><td>Power Automate クラウドフロー</td><td><strong>Dataflow</strong></td></tr><tr><td>必要ライセンス</td><td>Power Automate Premium</td><td><strong>Power Apps</strong>(per app または Premium)</td></tr><tr><td>更新頻度</td><td>15分ポーリング</td><td><strong>日次 1回</strong></td></tr><tr><td>Office Script</td><td>必須(334行)</td><td><strong>不要</strong></td></tr><tr><td>リクエスト予算の設計</td><td>設計の中核(技法1〜4)</td><td><strong>不要</strong></td></tr><tr><td>行ハッシュによる差分判定</td><td>必須</td><td><strong>不要</strong>(Dataflow が行う)</td></tr><tr><td>初期ロード</td><td>CSV統合 + インポート(約3日)</td><td><strong>不要</strong>(同じ Dataflow が処理)</td></tr><tr><td>同期制御 / 同期エラーテーブル</td><td>必要</td><td><strong>不要</strong></td></tr><tr><td>Excel のテーブル化</td><td>全ファイル必須</td><td><strong>不要</strong>(シートを直接読む)</td></tr><tr><td>区分列</td><td>ルックアップ(7本)</td><td><strong>テキスト</strong></td></tr><tr><td>検索UI</td><td>未設計</td><td><strong>モデル駆動アプリ + Dataverse 検索</strong></td></tr></tbody></table></div>
