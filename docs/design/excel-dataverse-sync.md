@@ -49,7 +49,7 @@
 | 1グループの明細数 | **99以下**(sub_no は2桁で足りる) |
 | 区分表 | **5行のマスタ1本で7つの区分列すべてを賄える** |
 | 手配票No の空欄 | **存在しない** |
-| 列名の変更 | Excel列「摘要」→「**手配票No**」、論理名 `crfff_RNo` |
+| 列名の変更 | Excel列「摘要」→「**手配票No**」、論理名 `sv_RNo` |
 
 ### 0-3. ライセンス要件【第2版で変更】
 
@@ -179,17 +179,17 @@ SharePoint: /毎月DB/
 
 | # | Excel列名 | 論理名 | 役割 |
 |---|---|---|---|
-| 1 | 受注No | `crfff_order_no` | キー。元ファイル照合用 |
-| 2 | 手配票No | `crfff_RNo` | キー。元ファイル照合用 |
-| 3 | 受注日 | `crfff_order_date` | 並べ替えの主軸(降順) |
-| 4 | 納期 | `crfff_delivery_date` | 参考情報 |
-| 5 | 得意先コード | `crfff_customer_code` | 絞り込み |
-| 6 | 得意先名１ | `crfff_customer_name1` | 絞り込み(部分一致) |
-| 7 | 商品コード | `crfff_item_code` | 絞り込み(部分一致) |
-| 8 | 商品名 | `crfff_item_name` | 絞り込み(部分一致) |
-| 9 | 受注数 | `crfff_order_qty` | 参照値 |
-| 10 | 単価 | `crfff_unit_price` | 参照値。見積の根拠 |
-| 11 | 売単価 | `crfff_sales_unit_price` | 参照値。見積の根拠 |
+| 1 | 受注No | `sv_order_no` | キー。元ファイル照合用 |
+| 2 | 手配票No | `sv_RNo` | キー。元ファイル照合用 |
+| 3 | 受注日 | `sv_order_date` | 並べ替えの主軸(降順) |
+| 4 | 納期 | `sv_delivery_date` | 参考情報 |
+| 5 | 得意先コード | `sv_customer_code` | 絞り込み |
+| 6 | 得意先名１ | `sv_customer_name1` | 絞り込み(部分一致) |
+| 7 | 商品コード | `sv_item_code` | 絞り込み(部分一致) |
+| 8 | 商品名 | `sv_item_name` | 絞り込み(部分一致) |
+| 9 | 受注数 | `sv_order_qty` | 参照値 |
+| 10 | 単価 | `sv_unit_price` | 参照値。見積の根拠 |
+| 11 | 売単価 | `sv_sales_unit_price` | 参照値。見積の根拠 |
 
 **`受注No` と `手配票No` は必ず残すこと。** 「この行の全59列を見たい」となったとき、
 元の Excel ファイルを引く唯一の手がかりになる。
@@ -243,11 +243,13 @@ SharePoint: /毎月DB/
 
 | テーブル | 論理名 | 用途 | 想定行数 |
 |---|---|---|---|
-| 毎月DB実績 | `crfff_jisseki` | 本体 | 100,000 → +6,000/年 |
-| 区分マスタ | `crfff_kubun` | 区分表(5行2列) | 5 |
+| 毎月DB実績 | `sv_jisseki` | 本体 | 100,000 → +6,000/年 |
+| 区分マスタ | `sv_kubun` | 区分表(5行2列) | 5 |
 
-> `crfff_` は発行者プレフィックスの仮置き。本格版 Dataverse では**ソリューションの発行者を自分で定義できる**ため、
-> `nlm_` のような意味のある接頭辞を最初に決めること。**後から変更すると全列の再作成になる。**
+> **発行者プレフィックスは `sv` で確定。** 以降の論理名はすべて `sv_` で始まる。
+> 既定の発行者(`cr8a3` のようなランダム文字列)ではなく、**カスタム発行者を新規作成して使うこと**。
+> **後から変更すると全列の再作成になる**ため、テーブル作成前に発行者を用意しておく。
+> 「選択肢の値プレフィックス」はプレフィックスから自動生成されるので、そのまま受け入れてよい。
 
 初版にあった `同期制御` `同期エラー` テーブルは**不要**。
 Dataflow が更新履歴とエラーを自前で保持し、失敗時はオーナーに通知される。
@@ -256,82 +258,82 @@ Dataflow が更新履歴とエラーを自前で保持し、失敗時はオー�
 
 | 表示名 | 論理名 | 型 | 備考 |
 |---|---|---|---|
-| 同期キー | `crfff_sync_key` | テキスト(100) | **主名前列 かつ 代替キー**。Upsert の判定に使う |
-| 受注No | `crfff_order_no` | テキスト(30) | キー構成要素 |
-| 手配票No | `crfff_RNo` | テキスト(30) | キー構成要素。旧「摘要」列 |
-| 明細枝番 | `crfff_sub_no` | 整数 | キー構成要素。取り込み時に採番 |
-| ソースファイル | `crfff_source_file` | テキスト(100) | `毎月DB_2026-11.xlsx` |
+| 同期キー | `sv_sync_key` | テキスト(100) | **主名前列 かつ 代替キー**。Upsert の判定に使う |
+| 受注No | `sv_order_no` | テキスト(30) | キー構成要素 |
+| 手配票No | `sv_RNo` | テキスト(30) | キー構成要素。旧「摘要」列 |
+| 明細枝番 | `sv_sub_no` | 整数 | キー構成要素。取り込み時に採番 |
+| ソースファイル | `sv_source_file` | テキスト(100) | `毎月DB_2026-11.xlsx` |
 
 初版にあった `行ハッシュ` `最終同期日時` は**不要**。差分判定は Dataflow が行う。
 
 > **論理名の大文字小文字に注意。**
 > Dataverse の論理名は**常に小文字に正規化される**。
-> スキーマ名に `crfff_RNo` と入力しても、実際の論理名は **`crfff_rno`** になる。
+> スキーマ名に `sv_RNo` と入力しても、実際の論理名は **`sv_rno`** になる。
 > 59列中、大文字を含むのはこの列だけ。Dataflow のマッピングで取り違えやすい。
 
 ### 3-3. 業務列(59列)
 
 | # | Excel列名 | 論理名 | 型 | 桁/精度 |
 |---|---|---|---|---|
-| 1 | ｻｲｽﾞ | `crfff_size` | テキスト | 50 |
-| 2 | データ区分 | `crfff_data_kubun` | テキスト | 10 |
-| 3 | ﾌﾟﾛｼﾞｪｸﾄ名コード | `crfff_project_code` | テキスト | 30 |
-| 4 | 外税額 | `crfff_tax_excl_amount` | 10進数 | 2 |
-| 5 | 規格・型番 | `crfff_spec_model` | テキスト | 100 |
-| 6 | 原価 | `crfff_cost` | 10進数 | 2 |
-| 7 | 原価税込区分 | `crfff_cost_taxincl_kubun` | テキスト | 10 |
-| 8 | 原価税率 | `crfff_cost_tax_rate` | 10進数 | 3 |
-| 9 | 受注No | `crfff_order_no` | テキスト | 30 |
-| 10 | 受注金額 | `crfff_order_amount` | 10進数 | 2 |
-| 11 | 受注数 | `crfff_order_qty` | 10進数 | 3 |
-| 12 | 受注日 | `crfff_order_date` | **日付のみ / タイムゾーン非依存** | — |
-| 13 | 商品コード | `crfff_item_code` | テキスト | 30 |
-| 14 | 商品項目１ | `crfff_item_attr1` | テキスト | 50 |
-| 15 | 商品項目２ | `crfff_item_attr2` | テキスト | 50 |
-| 16 | 商品項目３ | `crfff_item_attr3` | テキスト | 50 |
-| 17 | 商品名 | `crfff_item_name` | テキスト | 100 |
-| 18 | 商品名２ | `crfff_item_name2` | テキスト | 100 |
-| 19 | 色 | `crfff_color` | テキスト | 30 |
-| 20 | 税込区分 | `crfff_taxincl_kubun` | テキスト | 10 |
-| 21 | 税率 | `crfff_tax_rate` | 10進数 | 3 |
-| 22 | 粗利益 | `crfff_gross_profit` | 10進数 | 2 |
-| 23 | 単位 | `crfff_unit` | テキスト | 20 |
-| 24 | 単位区分 | `crfff_unit_kubun` | テキスト | 10 |
-| 25 | 単価 | `crfff_unit_price` | 10進数 | **4** |
-| 26 | 担当者コード | `crfff_staff_code` | テキスト | 20 |
-| 27 | 直送先コード | `crfff_dropship_code` | テキスト | 20 |
-| 28 | 直送先名１ | `crfff_dropship_name1` | テキスト | 100 |
-| 29 | 手配票No | `crfff_RNo` | テキスト | 30 |
-| 30 | 得意先コード | `crfff_customer_code` | テキスト | 20 |
-| 31 | 得意先名１ | `crfff_customer_name1` | テキスト | 100 |
-| 32 | 内税額 | `crfff_tax_incl_amount` | 10進数 | 2 |
-| 33 | 入数 | `crfff_pack_qty` | 10進数 | 3 |
-| 34 | 納期 | `crfff_delivery_date` | **日付のみ / タイムゾーン非依存** | — |
-| 35 | 売価金額 | `crfff_sales_amount` | 10進数 | 2 |
-| 36 | 売上項目１ | `crfff_sales_attr1` | テキスト | 50 |
-| 37 | 売上項目２ | `crfff_sales_attr2` | テキスト | 50 |
-| 38 | 売上項目３ | `crfff_sales_attr3` | テキスト | 50 |
-| 39 | 売単価 | `crfff_sales_unit_price` | 10進数 | **4** |
-| 40 | 箱数 | `crfff_box_qty` | 10進数 | 3 |
-| 41 | 番船 | `crfff_shipment_no` | テキスト | 30 |
-| 42 | 備考 | `crfff_note` | 複数行テキスト | 1000 |
-| 43 | 標準価格 | `crfff_standard_price` | 10進数 | 2 |
-| 44 | 部門コード | `crfff_dept_code` | テキスト | 20 |
-| 45 | スポット得意先名１ | `crfff_spot_customer_name1` | テキスト | 100 |
-| 46 | スポット得意先名２ | `crfff_spot_customer_name2` | テキスト | 100 |
-| 47 | ﾌﾟﾛｼﾞｪｸﾄ名名 | `crfff_project_name` | テキスト | 100 |
-| 48 | 軽減税率マーク | `crfff_reduced_tax_mark` | テキスト | 10 |
-| 49 | 見積No | `crfff_quote_no` | テキスト | 30 |
-| 50 | 原価軽減税率マーク | `crfff_cost_reduced_tax_mark` | テキスト | 10 |
-| 51 | 受注残高 | `crfff_backlog_amount` | 10進数 | 2 |
-| 52 | 受注残数 | `crfff_backlog_qty` | 10進数 | 3 |
-| 53 | 出荷マーク | `crfff_ship_mark` | テキスト | 10 |
-| 54 | 単位区分１受注残数 | `crfff_unit1_backlog_qty` | 10進数 | 3 |
-| 55 | 単位区分１受注数 | `crfff_unit1_order_qty` | 10進数 | 3 |
-| 56 | 単位区分１単位 | `crfff_unit1_unit` | テキスト | 20 |
-| 57 | 直送先名２ | `crfff_dropship_name2` | テキスト | 100 |
-| 58 | 得意先名２ | `crfff_customer_name2` | テキスト | 100 |
-| 59 | 利益率 | `crfff_profit_rate` | 10進数 | 3 |
+| 1 | ｻｲｽﾞ | `sv_size` | テキスト | 50 |
+| 2 | データ区分 | `sv_data_kubun` | テキスト | 10 |
+| 3 | ﾌﾟﾛｼﾞｪｸﾄ名コード | `sv_project_code` | テキスト | 30 |
+| 4 | 外税額 | `sv_tax_excl_amount` | 10進数 | 2 |
+| 5 | 規格・型番 | `sv_spec_model` | テキスト | 100 |
+| 6 | 原価 | `sv_cost` | 10進数 | 2 |
+| 7 | 原価税込区分 | `sv_cost_taxincl_kubun` | テキスト | 10 |
+| 8 | 原価税率 | `sv_cost_tax_rate` | 10進数 | 3 |
+| 9 | 受注No | `sv_order_no` | テキスト | 30 |
+| 10 | 受注金額 | `sv_order_amount` | 10進数 | 2 |
+| 11 | 受注数 | `sv_order_qty` | 10進数 | 3 |
+| 12 | 受注日 | `sv_order_date` | **日付のみ / タイムゾーン非依存** | — |
+| 13 | 商品コード | `sv_item_code` | テキスト | 30 |
+| 14 | 商品項目１ | `sv_item_attr1` | テキスト | 50 |
+| 15 | 商品項目２ | `sv_item_attr2` | テキスト | 50 |
+| 16 | 商品項目３ | `sv_item_attr3` | テキスト | 50 |
+| 17 | 商品名 | `sv_item_name` | テキスト | 100 |
+| 18 | 商品名２ | `sv_item_name2` | テキスト | 100 |
+| 19 | 色 | `sv_color` | テキスト | 30 |
+| 20 | 税込区分 | `sv_taxincl_kubun` | テキスト | 10 |
+| 21 | 税率 | `sv_tax_rate` | 10進数 | 3 |
+| 22 | 粗利益 | `sv_gross_profit` | 10進数 | 2 |
+| 23 | 単位 | `sv_unit` | テキスト | 20 |
+| 24 | 単位区分 | `sv_unit_kubun` | テキスト | 10 |
+| 25 | 単価 | `sv_unit_price` | 10進数 | **4** |
+| 26 | 担当者コード | `sv_staff_code` | テキスト | 20 |
+| 27 | 直送先コード | `sv_dropship_code` | テキスト | 20 |
+| 28 | 直送先名１ | `sv_dropship_name1` | テキスト | 100 |
+| 29 | 手配票No | `sv_RNo` | テキスト | 30 |
+| 30 | 得意先コード | `sv_customer_code` | テキスト | 20 |
+| 31 | 得意先名１ | `sv_customer_name1` | テキスト | 100 |
+| 32 | 内税額 | `sv_tax_incl_amount` | 10進数 | 2 |
+| 33 | 入数 | `sv_pack_qty` | 10進数 | 3 |
+| 34 | 納期 | `sv_delivery_date` | **日付のみ / タイムゾーン非依存** | — |
+| 35 | 売価金額 | `sv_sales_amount` | 10進数 | 2 |
+| 36 | 売上項目１ | `sv_sales_attr1` | テキスト | 50 |
+| 37 | 売上項目２ | `sv_sales_attr2` | テキスト | 50 |
+| 38 | 売上項目３ | `sv_sales_attr3` | テキスト | 50 |
+| 39 | 売単価 | `sv_sales_unit_price` | 10進数 | **4** |
+| 40 | 箱数 | `sv_box_qty` | 10進数 | 3 |
+| 41 | 番船 | `sv_shipment_no` | テキスト | 30 |
+| 42 | 備考 | `sv_note` | 複数行テキスト | 1000 |
+| 43 | 標準価格 | `sv_standard_price` | 10進数 | 2 |
+| 44 | 部門コード | `sv_dept_code` | テキスト | 20 |
+| 45 | スポット得意先名１ | `sv_spot_customer_name1` | テキスト | 100 |
+| 46 | スポット得意先名２ | `sv_spot_customer_name2` | テキスト | 100 |
+| 47 | ﾌﾟﾛｼﾞｪｸﾄ名名 | `sv_project_name` | テキスト | 100 |
+| 48 | 軽減税率マーク | `sv_reduced_tax_mark` | テキスト | 10 |
+| 49 | 見積No | `sv_quote_no` | テキスト | 30 |
+| 50 | 原価軽減税率マーク | `sv_cost_reduced_tax_mark` | テキスト | 10 |
+| 51 | 受注残高 | `sv_backlog_amount` | 10進数 | 2 |
+| 52 | 受注残数 | `sv_backlog_qty` | 10進数 | 3 |
+| 53 | 出荷マーク | `sv_ship_mark` | テキスト | 10 |
+| 54 | 単位区分１受注残数 | `sv_unit1_backlog_qty` | 10進数 | 3 |
+| 55 | 単位区分１受注数 | `sv_unit1_order_qty` | 10進数 | 3 |
+| 56 | 単位区分１単位 | `sv_unit1_unit` | テキスト | 20 |
+| 57 | 直送先名２ | `sv_dropship_name2` | テキスト | 100 |
+| 58 | 得意先名２ | `sv_customer_name2` | テキスト | 100 |
+| 59 | 利益率 | `sv_profit_rate` | 10進数 | 3 |
 
 ### 3-4. 区分列はルックアップではなくテキストにする【第2版で変更】
 
@@ -366,12 +368,12 @@ Dataflow が更新履歴とエラーを自前で保持し、失敗時はオー�
 **検索対象列には必ずインデックスを設定する。** 10万行の検索性能に直結する。
 
 ```
-crfff_item_code       商品コード
-crfff_item_name       商品名
-crfff_customer_code   得意先コード
-crfff_customer_name1  得意先名１
-crfff_order_date      受注日（並べ替え用）
-crfff_source_file     ソースファイル
+sv_item_code       商品コード
+sv_item_name       商品名
+sv_customer_code   得意先コード
+sv_customer_name1  得意先名１
+sv_order_date      受注日（並べ替え用）
+sv_source_file     ソースファイル
 ```
 
 ### 3-7. 容量見積り
@@ -407,8 +409,8 @@ crfff_source_file     ソースファイル
 |---|---|
 | 種類 | 標準データフロー(Dataverse にデータを格納) |
 | ソース | SharePoint フォルダー(`/毎月DB/`) |
-| 対象テーブル | `crfff_jisseki`(既存テーブルに読み込む) |
-| キー | **代替キー `crfff_sync_key`** による Upsert |
+| 対象テーブル | `sv_jisseki`(既存テーブルに読み込む) |
+| キー | **代替キー `sv_sync_key`** による Upsert |
 | 削除 | **「クエリ出力に存在しない行を削除する」を有効化** |
 | 更新スケジュール | **毎日 02:00**(1日1回) |
 | 所有者 | 専用アカウント(Power Apps ライセンス付き) |
@@ -460,14 +462,14 @@ SheetsOnly  = Table.SelectRows(Expanded, each [Kind] = "Sheet"),
 // インデックスがそのまま「出現順」になる
 Grouped = Table.Group(
     Typed,
-    {"crfff_order_no", "crfff_RNo"},
-    {{"g", each Table.AddIndexColumn(_, "crfff_sub_no", 1, 1, Int64.Type), type table}}
+    {"sv_order_no", "sv_RNo"},
+    {{"g", each Table.AddIndexColumn(_, "sv_sub_no", 1, 1, Int64.Type), type table}}
 ),
 
 ExpandedSubNo = Table.ExpandTableColumn(
     Grouped, "g",
-    List.RemoveItems(Table.ColumnNames(Typed), {"crfff_order_no", "crfff_RNo"})
-        & {"crfff_sub_no"}
+    List.RemoveItems(Table.ColumnNames(Typed), {"sv_order_no", "sv_RNo"})
+        & {"sv_sub_no"}
 ),
 ```
 
@@ -475,10 +477,10 @@ ExpandedSubNo = Table.ExpandTableColumn(
 
 ```m
 // 3要素を区切り無しで連結する  例: 13524 + R08-0234 + 01 → 13524R08-023401
-AddedSyncKey = Table.AddColumn(ExpandedSubNo, "crfff_sync_key",
-    each [crfff_order_no]
-       & [crfff_RNo]
-       & Text.PadStart(Text.From([crfff_sub_no]), 2, "0"),
+AddedSyncKey = Table.AddColumn(ExpandedSubNo, "sv_sync_key",
+    each [sv_order_no]
+       & [sv_RNo]
+       & Text.PadStart(Text.From([sv_sub_no]), 2, "0"),
     type text
 ),
 ```
@@ -489,10 +491,10 @@ AddedSyncKey = Table.AddColumn(ExpandedSubNo, "crfff_sync_key",
 // キーが空の行があれば、その場で更新を失敗させる。
 // 静かに取り込んで後から気づく事態を防ぐ。
 Validated = Table.AddColumn(AddedSyncKey, "_check", each
-    if [crfff_order_no] = null or Text.Trim([crfff_order_no]) = "" then
-        error "受注Noが空の行があります: " & [crfff_source_file]
-    else if [crfff_RNo] = null or Text.Trim([crfff_RNo]) = "" then
-        error "手配票Noが空の行があります: " & [crfff_source_file]
+    if [sv_order_no] = null or Text.Trim([sv_order_no]) = "" then
+        error "受注Noが空の行があります: " & [sv_source_file]
+    else if [sv_RNo] = null or Text.Trim([sv_RNo]) = "" then
+        error "手配票Noが空の行があります: " & [sv_source_file]
     else true),
 
 Cleaned = Table.RemoveColumns(Validated, {"_check"}),
@@ -504,7 +506,7 @@ Cleaned = Table.RemoveColumns(Validated, {"_check"}),
 // 受注No と 手配票No を区切り無しで連結しているため、
 // 桁数の組み合わせによっては別の行と同じ文字列になりうる。
 // 代替キーの一意制約でも検知されるが、ここで止めたほうが原因が分かりやすい。
-DupCheck = if Table.RowCount(Table.Distinct(Cleaned, {"crfff_sync_key"}))
+DupCheck = if Table.RowCount(Table.Distinct(Cleaned, {"sv_sync_key"}))
             <> Table.RowCount(Cleaned)
            then error "同期キーが重複しています"
            else Cleaned,
@@ -529,8 +531,8 @@ DupCheck = if Table.RowCount(Table.Distinct(Cleaned, {"crfff_sync_key"}))
 | 設定 | 値 |
 |---|---|
 | 読み込み設定 | **既存のテーブルに読み込む** |
-| 対象テーブル | `crfff_jisseki` |
-| 代替キー | **`crfff_sync_key`** |
+| 対象テーブル | `sv_jisseki` |
+| 代替キー | **`sv_sync_key`** |
 | 列マッピング | 論理名どおり1対1(手順5で改名済みのため自動一致する) |
 | 「クエリ出力に存在しない行を削除する」 | **有効** |
 
@@ -770,7 +772,7 @@ Business Standard に Access が含まれる。10万行は瞬時。単独PCで�
 10. テーブルを作成（3-2 / 3-3）
       日付は「日付のみ / タイムゾーン非依存」
       金額は10進数、監査はOFF
-11. 代替キー crfff_sync_key を設定
+11. 代替キー sv_sync_key を設定
 12. 検索インデックスを設定（3-6）
 ```
 
@@ -813,9 +815,9 @@ Business Standard に Access が含まれる。10万行は瞬時。単独PCで�
 - [ ] 日付列を「日付のみ / タイムゾーン非依存」で作成した
 - [ ] 金額列を通貨型ではなく10進数で作成した
 - [ ] テーブルの監査をOFFにした
-- [ ] 代替キー `crfff_sync_key` を設定した
+- [ ] 代替キー `sv_sync_key` を設定した
 - [ ] 検索対象列にインデックスを設定した
-- [ ] `crfff_RNo` の論理名が `crfff_rno`(小文字)であることを確認した
+- [ ] `sv_RNo` の論理名が `sv_rno`(小文字)であることを確認した
 - [ ] コード系列(`受注No` `手配票No` 含む)がテキスト書式になっている
 - [ ] Power Query の自動型検出を無効にした
 - [ ] `Kind = "Sheet"` でワークシートを読んでいる

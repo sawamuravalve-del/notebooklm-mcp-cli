@@ -36,7 +36,7 @@ const TABLE_NAME = "T_DB";
 const SUB_NO_DIGITS = 2;
 const MAX_LINES_PER_GROUP = 99;   // 受注No + 手配票No あたりの明細上限
 
-/** Excel列名 → Dataverse論理名（接頭辞なし。フロー側で crfff_ を補う） */
+/** Excel列名 → Dataverse論理名（接頭辞なし。フロー側で sv_ を補う） */
 const COL_MAP: { [k: string]: string } = {
   "ｻｲｽﾞ": "size",
   "データ区分": "data_kubun",
@@ -67,7 +67,7 @@ const COL_MAP: { [k: string]: string } = {
   "直送先コード": "dropship_code",
   "直送先名１": "dropship_name1",
   // 旧「摘要」。手配票No へ改称し、同期キーの構成要素に昇格した。
-  // Dataverse 側の論理名は crfff_RNo（実際の論理名は自動的に小文字化され crfff_rno になる）
+  // Dataverse 側の論理名は sv_RNo（実際の論理名は自動的に小文字化され sv_rno になる）
   "手配票No": "RNo",
   "得意先コード": "customer_code",
   "得意先名１": "customer_name1",
