@@ -58,7 +58,7 @@ COLUMN_SPEC = [
     ("商品名",       [],                        "text"),
     ("受注数",       [],                        "num"),
     ("単価",         [],                        "num"),
-    ("売単価",       [],                        "num"),
+    ("受注金額",     [],                        "num"),
 ]
 
 COLUMNS   = [c[0] for c in COLUMN_SPEC]
@@ -346,14 +346,15 @@ def write_workbook(rows, out_path):
     f_date   = wb.add_format({"num_format": "yyyy/mm/dd"})
     f_qty    = wb.add_format({"num_format": "#,##0.###"})
     f_price  = wb.add_format({"num_format": "#,##0.####"})
+    f_amt    = wb.add_format({"num_format": "#,##0.##"})
     f_text   = wb.add_format({})
 
     fmt_of = {"受注日": f_date, "納期": f_date, "受注数": f_qty,
-              "単価": f_price, "売単価": f_price}
+              "単価": f_price, "受注金額": f_amt}
 
     widths = {"受注No": 12, "手配票No": 14, "受注日": 12, "納期": 12,
               "得意先コード": 13, "得意先名１": 28, "商品コード": 14,
-              "商品名": 34, "受注数": 10, "単価": 12, "売単価": 12}
+              "商品名": 34, "受注数": 10, "単価": 12, "受注金額": 14}
     for i, col in enumerate(COLUMNS):
         ws.set_column(i, i, widths.get(col, 14), fmt_of.get(col, f_text))
 

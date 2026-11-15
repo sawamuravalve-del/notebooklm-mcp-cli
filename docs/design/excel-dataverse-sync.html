@@ -284,13 +284,24 @@ table code{background:var(--surface3);font-size:12px}
 <ul><li>月次締めで <code>current/</code> のファイルを <code>archive/</code> へ移動し、新しい月のファイルを <code>current/</code> に置く</li><li>OneDrive の一時ファイル <code>~$*.xlsx</code> と競合コピー <code>*-&lt;PC名&gt;.xlsx</code> は Power Query 側で除外する</li></ul>
 <h3 id="s11"><span class="hn">2-3</span>検索に使う列【確定・11列】</h3>
 <p>59列すべてを検索対象にはしない。<strong>引合の価格判断に実際に使う11列</strong>に絞る。</p>
-<div class="tw"><table><thead><tr><th>#</th><th>Excel列名</th><th>論理名</th><th>役割</th></tr></thead><tbody><tr><td>1</td><td>受注No</td><td><code>sv_order_no</code></td><td>キー。元ファイル照合用</td></tr><tr><td>2</td><td>手配票No</td><td><code>sv_RNo</code></td><td>キー。元ファイル照合用</td></tr><tr><td>3</td><td>受注日</td><td><code>sv_order_date</code></td><td>並べ替えの主軸(降順)</td></tr><tr><td>4</td><td>納期</td><td><code>sv_delivery_date</code></td><td>参考情報</td></tr><tr><td>5</td><td>得意先コード</td><td><code>sv_customer_code</code></td><td>絞り込み</td></tr><tr><td>6</td><td>得意先名１</td><td><code>sv_customer_name1</code></td><td>絞り込み(部分一致)</td></tr><tr><td>7</td><td>商品コード</td><td><code>sv_item_code</code></td><td>絞り込み(部分一致)</td></tr><tr><td>8</td><td>商品名</td><td><code>sv_item_name</code></td><td>絞り込み(部分一致)</td></tr><tr><td>9</td><td>受注数</td><td><code>sv_order_qty</code></td><td>参照値</td></tr><tr><td>10</td><td>単価</td><td><code>sv_unit_price</code></td><td>参照値。見積の根拠</td></tr><tr><td>11</td><td>売単価</td><td><code>sv_sales_unit_price</code></td><td>参照値。見積の根拠</td></tr></tbody></table></div>
+<div class="tw"><table><thead><tr><th>#</th><th>Excel列名</th><th>論理名</th><th>役割</th></tr></thead><tbody><tr><td>1</td><td>受注No</td><td><code>sv_order_no</code></td><td>キー。元ファイル照合用</td></tr><tr><td>2</td><td>手配票No</td><td><code>sv_RNo</code></td><td>キー。元ファイル照合用</td></tr><tr><td>3</td><td>受注日</td><td><code>sv_order_date</code></td><td>並べ替えの主軸(降順)</td></tr><tr><td>4</td><td>納期</td><td><code>sv_delivery_date</code></td><td>参考情報</td></tr><tr><td>5</td><td>得意先コード</td><td><code>sv_customer_code</code></td><td>絞り込み</td></tr><tr><td>6</td><td>得意先名１</td><td><code>sv_customer_name1</code></td><td>絞り込み(部分一致)</td></tr><tr><td>7</td><td>商品コード</td><td><code>sv_item_code</code></td><td>絞り込み(部分一致)</td></tr><tr><td>8</td><td>商品名</td><td><code>sv_item_name</code></td><td>絞り込み(部分一致)</td></tr><tr><td>9</td><td>受注数</td><td><code>sv_order_qty</code></td><td>参照値</td></tr><tr><td>10</td><td>単価</td><td><code>sv_unit_price</code></td><td>参照値。見積の根拠</td></tr><tr><td>11</td><td>受注金額</td><td><code>sv_order_amount</code></td><td>参照値。金額そのもの</td></tr></tbody></table></div>
 <p><strong><code>受注No</code> と <code>手配票No</code> は必ず残すこと。</strong> 「この行の全59列を見たい」となったとき、 元の Excel ファイルを引く唯一の手がかりになる。</p>
 <aside class="note"><p><strong>仕様の絞り込みは <code>商品名</code> で成立することを確認済み。</strong> <code>規格・型番</code> <code>ｻｲｽﾞ</code> <code>色</code> <code>商品項目１〜３</code> は、<code>商品名</code> に必要な情報が含まれているため除外した。</p></aside>
 <h4 id="s12">原価・粗利益を含めない【意図的】</h4>
 <p><code>原価</code> <code>粗利益</code> <code>利益率</code> は検索結果に出さない。</p>
-<p>これにより、本設計のデメリットとして挙げていた <strong>「列レベルセキュリティが無く、原価・粗利益を特定メンバーに隠せない」という問題が、 そもそも持ち込まないことで解消する。</strong> 見積の判断は <code>単価</code> <code>売単価</code> で行う。</p>
+<p>これにより、本設計のデメリットとして挙げていた <strong>「列レベルセキュリティが無く、原価・粗利益を特定メンバーに隠せない」という問題が、 そもそも持ち込まないことで解消する。</strong> 見積の判断は <code>単価</code> と <code>受注金額</code> で行う。</p>
+<p>なお実データを確認したところ、<strong><code>原価</code> は全件 0、<code>粗利益</code> は <code>受注金額</code> と完全一致</strong>していた。 原価管理はこのデータに存在しないため、除外は情報を失う判断ではない。</p>
 <p>将来、原価も見たくなった場合は列を足すだけでよく、作り直しにはならない。</p>
+<h4 id="s12">実データで確認した充足率【2026-11 時点】</h4>
+<p>サンプル3ファイル(2020-01 / 2023-10 / 2026-11、計1,430行)で実測した結果。</p>
+<div class="tw"><table><thead><tr><th>列</th><th>充足率</th><th>備考</th></tr></thead><tbody><tr><td>受注No / 手配票No / 受注日 / 納期 / 得意先コード / 得意先名１ / 商品コード</td><td>100%</td><td>—</td></tr><tr><td>商品名</td><td>99.9%</td><td><strong>実質的な検索対象</strong>。「FC/FC ﾈｼﾞｺﾐ形 2方ｺｯｸ 50A」のように仕様が入る</td></tr><tr><td>受注数 / 受注金額</td><td>42.3%</td><td>実際の品目行のみ</td></tr><tr><td>単価</td><td>20.8%</td><td>有償の品目行のみ</td></tr></tbody></table></div>
+<p><strong>価格が入るのは全体の2割</strong>だが、これは欠損ではなくデータの構造による。 1つの受注は「有償の品目行」「支給品・無償の行」「付帯作業の説明行」で構成される。</p>
+<div class="code"><pre><code>14245  R08-0419  0000  074508-D                 数量なし・金額なし  ← 説明行
+14245  R08-0419  0203  FC/FC ﾈｼﾞｺﾐ形 2方ｺｯｸ 50  9700  ← 有償の品目行
+14245  R08-0419  0000  C12074ﾊﾟｯｷﾝ支給           数量2・金額0      ← 支給品</code></pre></div>
+<p><code>受注金額</code> を列に入れているのは、<strong>「金額0の支給品」と「記録の無い説明行」を区別するため</strong>。 <code>単価</code> だけでは両者がどちらも空欄になり、見分けられない。</p>
+<p>検索の実務は「商品名で引く → 同じ <code>受注No</code> + <code>手配票No</code> の行をまとめて見る」形になる。</p>
+<aside class="note"><p><strong>空だった列</strong>: <code>売単価</code> <code>規格・型番</code> <code>ｻｲｽﾞ</code> <code>色</code> <code>商品名２</code> <code>標準価格</code> ほかは3ファイルとも0%。 検索列から外した判断は、実データに裏付けられている。</p></aside>
 <h4 id="s12">適用先</h4>
 <div class="tw"><table><thead><tr><th>対象</th><th>適用</th></tr></thead><tbody><tr><td><strong>代替案A(Excel ブック)</strong></td><td>この11列だけを読み込む。100,000行 × 11列 ≒ 110万セル</td></tr><tr><td><strong>モデル駆動アプリの既定ビュー</strong></td><td>この11列を表示列にする(5-2)</td></tr><tr><td><strong>Dataverse テーブル本体</strong></td><td>59列すべてを保持する(3-3)。表示しないだけ</td></tr></tbody></table></div>
 <aside class="note"><p><strong>テーブル本体は59列のまま保持する。</strong> Power Apps Premium 加入によりテナント既定容量が使えるため、200〜250MB は問題にならない(0-4)。 「後から他の列も見たくなる」余地を残すほうが価値が高い。 将来、容量が逼迫した場合は11列に絞ることで約半分(100〜120MB)にできる。</p></aside>
@@ -436,7 +447,7 @@ DupCheck = if Table.RowCount(Table.Distinct(Cleaned, {"sv_sync_key"}))
 
 3. 既定のビューを作成（2-3 の11列）
      列: 受注日 / 納期 / 得意先コード / 得意先名１ / 商品コード / 商品名 /
-         受注数 / 単価 / 売単価 / 受注No / 手配票No
+         受注数 / 単価 / 受注金額 / 受注No / 手配票No
      並べ替え: 受注日 降順
 
 4. モデル駆動アプリを新規作成し、毎月DB実績テーブルを追加
@@ -452,7 +463,7 @@ DupCheck = if Table.RowCount(Table.Distinct(Cleaned, {"sv_sync_key"}))
      → 商品コード・商品名を横断して該当行が出る
 2. ビューの列フィルターで 得意先名１ を "ABC" で絞る
 3. 受注日 降順で並んでいるため、直近の実績が最上段に出る
-4. 単価 / 売単価 / 原価 / 粗利益 を確認して見積に使う</code></pre></div>
+4. 単価 / 受注金額 を確認して見積に使う</code></pre></div>
 <hr>
 <h2 id="s33"><span class="hn">6</span>メリット / デメリット</h2>
 <h3 id="s34">メリット</h3>
