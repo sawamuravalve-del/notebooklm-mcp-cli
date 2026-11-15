@@ -26,7 +26,7 @@ import os
 import re
 import glob
 from datetime import datetime, timedelta, date
-from collections import defaultdict
+from collections import defaultdict, Counter
 
 try:
     from openpyxl import load_workbook
@@ -330,6 +330,41 @@ def assign_keys(rows, issues):
             seen[key] = rec
 
 
+def detect_duplicate_blocks(rows, issues):
+    """同じ受注の明細が丸ごと N 回繰り返されていないか調べる。
+
+    累積ファイルと月次ファイルを両方取り込んでしまった場合に起きる。
+    sub_no は出現順の連番なので、二重に取り込んでも同期キーは衝突せず、
+    そのまま別の行として通ってしまう。ここで気づけるようにしておく。
+
+    「一部の行だけが重複」している場合は対象外にしている。
+    文章を複数行に折り返した説明行（例:「の為、本票では請求しない。」）が
+    正当に何度も現れるためで、これは重複ではない。
+    """
+    grp = defaultdict(list)
+    for rec in rows:
+        if rec["受注No"] is not None and rec["手配票No"] is not None:
+            grp[(rec["受注No"], rec["手配票No"])].append(rec)
+
+    for (order_no, tehai_no), recs in grp.items():
+        if len(recs) < 2:
+            continue
+        sig = Counter(tuple(r[c] for c in COLUMNS) for r in recs)
+        mult = set(sig.values())
+        if len(mult) != 1 or 1 in mult:
+            continue
+        n = mult.pop()
+        files = sorted({r["_file"] for r in recs})
+        issues.append({
+            "kind": "受注の明細が丸ごと重複",
+            "file": " / ".join(files),
+            "row": recs[0]["_row"],
+            "detail": f"受注No {order_no} / 手配票No {tehai_no} の "
+                      f"{len(recs) // n} 明細が {n} 回ずつ入っている"
+                      f"（余剰 {len(recs) - len(recs) // n} 行）",
+        })
+
+
 # ---------------------------------------------------------------------------
 # 出力
 # ---------------------------------------------------------------------------
@@ -476,6 +511,7 @@ def main(argv):
                        "detail": f"{col} … {cnt:,} 行。先行ゼロがある値なら失われている"})
 
     assign_keys(rows, issues)
+    detect_duplicate_blocks(rows, issues)
 
     # 受注日 降順。日付が無い行は末尾へ
     rows.sort(key=lambda r: (r["受注日"] is None,
