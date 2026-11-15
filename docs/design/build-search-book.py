@@ -75,8 +75,11 @@ MAX_LINES_PER_GROUP = 99                    # sub_no は2桁
 
 # 目に見えない文字。Web からの貼り付けなどで混入する
 INVISIBLE = re.compile(r"[​-‍﻿]")
-# 同期キーに使える文字
-KEY_SAFE  = re.compile(r"^[0-9A-Za-z\-_]+$")
+# 同期キーに使えない文字。
+# 当初は英数字とハイフンのみに限っていたが、実データの手配票No には
+# 「R08-0073-預-08」のように日本語が入る。日本語は JSON のキーにも
+# Dataverse の代替キーにも使えるため、本当に危険な文字だけを弾く。
+KEY_UNSAFE = re.compile(r"[\"\\/<>*%&:?|#\x00-\x1f]")
 
 EXCEL_EPOCH = datetime(1899, 12, 30)
 
@@ -113,25 +116,51 @@ def norm_code(v):
 
 
 def norm_date(v):
-    """日付の正規化。シリアル値・datetime・文字列のいずれにも対応する。"""
+    """
+    日付の正規化。実データは YYYYMMDD の8桁（数値または文字列）で入っている。
+    Excel のシリアル値・datetime・区切り付き文字列にも一応対応しておく。
+    """
     if v is None or v == "":
         return None, None
     if isinstance(v, datetime):
         return v.date(), None
     if isinstance(v, date):
         return v, None
-    if isinstance(v, (int, float)) and not isinstance(v, bool):
+
+    is_num = isinstance(v, (int, float)) and not isinstance(v, bool)
+
+    # 数値は整数文字列に直してから判定する（20200127.0 のような値に備える）
+    if is_num:
+        if float(v).is_integer():
+            s = str(int(v))
+        else:
+            s = None
+    else:
+        s = norm_text(v)
+
+    # YYYYMMDD（8桁）。実データの主形式
+    if s and re.fullmatch(r"\d{8}", s):
+        try:
+            return date(int(s[:4]), int(s[4:6]), int(s[6:8])), None
+        except ValueError:
+            return None, s
+
+    # Excel のシリアル値（通常5桁程度）
+    if is_num:
         if v <= 0:
             return None, None
-        try:
-            return (EXCEL_EPOCH + timedelta(days=float(v))).date(), None
-        except (OverflowError, ValueError):
-            return None, repr(v)
-    s = norm_text(v)
+        if 0 < float(v) < 1000000:
+            try:
+                return (EXCEL_EPOCH + timedelta(days=float(v))).date(), None
+            except (OverflowError, ValueError):
+                return None, repr(v)
+        return None, repr(v)
+
     if s is None:
         return None, None
-    s2 = s.replace("/", "-").replace(".", "-")
-    m = re.match(r"^(\d{4})-(\d{1,2})-(\d{1,2})", s2)
+
+    # 2026-11-02 / 2026/11/02 など
+    m = re.match(r"^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})", s)
     if m:
         try:
             return date(int(m.group(1)), int(m.group(2)), int(m.group(3))), None
@@ -199,7 +228,7 @@ def map_header(header_cells, path, issues):
     return pos
 
 
-def read_file(path, issues):
+def read_file(path, issues, numeric_codes):
     """1ファイルを読み、正規化済みの行を返す。"""
     rows = []
     wb = load_workbook(path, read_only=True, data_only=True)
@@ -242,9 +271,8 @@ def read_file(path, issues):
                 elif kind == "code":
                     val, numeric_origin = norm_code(v)
                     if numeric_origin:
-                        issues.append({"kind": "先行ゼロ消失の疑い",
-                                       "file": fname, "row": rn,
-                                       "detail": f"{col} が数値として格納されている（値 {val}）"})
+                        # 行ごとに出すと件数が膨れるため、列単位で数えて後でまとめる
+                        numeric_codes[(fname, col)] += 1
                 else:
                     val = norm_text(v)
 
@@ -272,7 +300,7 @@ def assign_keys(rows, issues):
                 issues.append({"kind": "キーが空",
                                "file": rec["_file"], "row": rec["_row"],
                                "detail": f"{col} が空"})
-            elif not KEY_SAFE.match(val):
+            elif KEY_UNSAFE.search(val):
                 issues.append({"kind": "キーに使えない文字",
                                "file": rec["_file"], "row": rec["_row"],
                                "detail": f"{col} = {val}"})
@@ -373,6 +401,19 @@ def write_report(rows, files, sheet_names, issues, out_path, src_folder):
         L.append(f"| {n} | {sheet_names.get(n, '—')} | {per_file.get(n, 0):,} |")
     L.append("")
 
+    L.append("## 列ごとの充足率\n")
+    L.append("検索に使う11列に、実際どれだけ値が入っているか。")
+    L.append("充足率が低い列は、検索結果に出しても空欄が並ぶ。\n")
+    L.append("| 列 | 非空 | 充足率 |")
+    L.append("|---|---|---|")
+    n = max(len(rows), 1)
+    for col in COLUMNS:
+        filled = sum(1 for r in rows if r.get(col) is not None)
+        pct = filled / n * 100
+        mark = " ←空" if filled == 0 else (" ←低" if pct < 30 else "")
+        L.append(f"| {col} | {filled:,} | {pct:.1f}%{mark} |")
+    L.append("")
+
     if not issues:
         L.append("## 検出された問題\n")
         L.append("**問題は検出されませんでした。**\n")
@@ -417,14 +458,21 @@ def main(argv):
 
     print(f"対象ファイル: {len(files)} 件")
     issues, rows, sheet_names = [], [], {}
+    numeric_codes = defaultdict(int)
     for i, p in enumerate(files, 1):
-        got, sheet = read_file(p, issues)
+        got, sheet = read_file(p, issues, numeric_codes)
         sheet_names[os.path.basename(p)] = sheet
         rows.extend(got)
         print(f"  [{i}/{len(files)}] {os.path.basename(p)}  {len(got):,} 行  (シート: {sheet})")
 
     if not rows:
         sys.exit("取り込めた行がありません。品質レポートを確認してください。")
+
+    # コード列が数値として格納されていたファイルを、列単位でまとめて報告する
+    for (fname, col), cnt in sorted(numeric_codes.items()):
+        issues.append({"kind": "コード列が数値で格納されている",
+                       "file": fname, "row": "",
+                       "detail": f"{col} … {cnt:,} 行。先行ゼロがある値なら失われている"})
 
     assign_keys(rows, issues)
 
