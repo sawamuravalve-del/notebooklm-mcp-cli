@@ -166,51 +166,52 @@ table code{background:var(--surface3);font-size:12px}
 <a class="nav__l2" href="#s8"><span class="nav__n">2</span><span>Excel側に必要な改修</span></a>
 <a class="nav__l3" href="#s9"><span class="nav__n">2-1</span><span>コード系列の書式を「文字列」にする</span></a>
 <a class="nav__l3" href="#s10"><span class="nav__n">2-2</span><span>ファイル配置とファイル名規約</span></a>
-<a class="nav__l3" href="#s11"><span class="nav__n">2-3</span><span>アーカイブの集約</span></a>
-<a class="nav__l3" href="#s12"><span class="nav__n">2-4</span><span>不要になったもの</span></a>
-<a class="nav__l2" href="#s13"><span class="nav__n">3</span><span>Dataverse テーブル設計</span></a>
-<a class="nav__l3" href="#s14"><span class="nav__n">3-1</span><span>テーブル一覧</span></a>
-<a class="nav__l3" href="#s15"><span class="nav__n">3-2</span><span>管理列</span></a>
-<a class="nav__l3" href="#s16"><span class="nav__n">3-3</span><span>業務列(59列)</span></a>
-<a class="nav__l3" href="#s17"><span class="nav__n">3-4</span><span>区分列はルックアップではなくテキストにする</span></a>
-<a class="nav__l3" href="#s18"><span class="nav__n">3-5</span><span>型選択の根拠</span></a>
-<a class="nav__l3" href="#s19"><span class="nav__n">3-6</span><span>検索インデックス</span></a>
-<a class="nav__l3" href="#s20"><span class="nav__n">3-7</span><span>容量見積り</span></a>
-<a class="nav__l2" href="#s21"><span class="nav__n">4</span><span>Dataflow 設計</span></a>
-<a class="nav__l3" href="#s22"><span class="nav__n">4-1</span><span>全体方針</span></a>
-<a class="nav__l3" href="#s23"><span class="nav__n">4-2</span><span>Power Query の処理手順</span></a>
-<a class="nav__l3" href="#s24"><span class="nav__n">4-3</span><span>主要な M コード</span></a>
-<a class="nav__l3" href="#s25"><span class="nav__n">4-4</span><span>日付と数値の扱い</span></a>
-<a class="nav__l3" href="#s26"><span class="nav__n">4-5</span><span>Dataverse へのマッピング</span></a>
-<a class="nav__l3" href="#s27"><span class="nav__n">4-6</span><span>更新スケジュールと監視</span></a>
-<a class="nav__l2" href="#s28"><span class="nav__n">5</span><span>検索アプリ設計</span></a>
-<a class="nav__l3" href="#s29"><span class="nav__n">5-1</span><span>キャンバスアプリを使わない</span></a>
-<a class="nav__l3" href="#s30"><span class="nav__n">5-2</span><span>モデル駆動アプリ + Dataverse 検索</span></a>
-<a class="nav__l3" href="#s31"><span class="nav__n">5-3</span><span>検索の実際の操作</span></a>
-<a class="nav__l2" href="#s32"><span class="nav__n">6</span><span>メリット / デメリット</span></a>
-<a class="nav__l3" href="#s33"><span>メリット</span></a>
-<a class="nav__l3" href="#s34"><span>デメリット</span></a>
-<a class="nav__l2" href="#s35"><span class="nav__n">7</span><span>見落としやすい弱点</span></a>
-<a class="nav__l3" href="#s36"><span class="nav__n">1</span><span>ライセンスとDataverse容量を確認せずに着手すること</span></a>
-<a class="nav__l3" href="#s37"><span class="nav__n">2</span><span>キャンバスアプリで作ってしまうこと</span></a>
-<a class="nav__l3" href="#s38"><span class="nav__n">3</span><span>Dataflow の所有者を個人アカウントにすること</span></a>
-<a class="nav__l3" href="#s39"><span class="nav__n">4</span><span>タイムゾーン設定は後から変えられない</span></a>
-<a class="nav__l3" href="#s40"><span class="nav__n">5</span><span>自動型検出による取り込みの揺れ</span></a>
-<a class="nav__l3" href="#s41"><span class="nav__n">6</span><span>アーカイブ200ファイルによる更新時間</span></a>
-<a class="nav__l3" href="#s42"><span class="nav__n">7</span><span>200ファイル構造そのもの</span></a>
-<a class="nav__l2" href="#s43"><span class="nav__n">8</span><span>代替案</span></a>
-<a class="nav__l3" href="#s44"><span>代替案A — Excel + Power Query(追加費用ゼロ)</span></a>
-<a class="nav__l3" href="#s45"><span>代替案B — SharePoint リスト</span></a>
-<a class="nav__l3" href="#s46"><span>代替案C — ローカル Access</span></a>
-<a class="nav__l2" href="#s47"><span class="nav__n">9</span><span>構築手順</span></a>
-<a class="nav__l3" href="#s48"><span>Day 0 — 確認(着手前に必須)</span></a>
-<a class="nav__l3" href="#s49"><span>Day 1 — Excel 側の準備</span></a>
-<a class="nav__l3" href="#s50"><span>Day 2 — Dataverse</span></a>
-<a class="nav__l3" href="#s51"><span>Day 3 — Dataflow</span></a>
-<a class="nav__l3" href="#s52"><span>Day 4 — 検索アプリ</span></a>
-<a class="nav__l3" href="#s53"><span>Day 5 以降 — 検証</span></a>
-<a class="nav__l2" href="#s54"><span class="nav__n">10</span><span>実装チェックリスト</span></a>
-<a class="nav__l2" href="#s55"><span class="nav__n">11</span><span>初版からの変更点</span></a></nav>
+<a class="nav__l3" href="#s11"><span class="nav__n">2-3</span><span>検索に使う列【確定・11列】</span></a>
+<a class="nav__l3" href="#s12"><span class="nav__n">2-4</span><span>アーカイブの集約</span></a>
+<a class="nav__l3" href="#s13"><span class="nav__n">2-5</span><span>不要になったもの</span></a>
+<a class="nav__l2" href="#s14"><span class="nav__n">3</span><span>Dataverse テーブル設計</span></a>
+<a class="nav__l3" href="#s15"><span class="nav__n">3-1</span><span>テーブル一覧</span></a>
+<a class="nav__l3" href="#s16"><span class="nav__n">3-2</span><span>管理列</span></a>
+<a class="nav__l3" href="#s17"><span class="nav__n">3-3</span><span>業務列(59列)</span></a>
+<a class="nav__l3" href="#s18"><span class="nav__n">3-4</span><span>区分列はルックアップではなくテキストにする</span></a>
+<a class="nav__l3" href="#s19"><span class="nav__n">3-5</span><span>型選択の根拠</span></a>
+<a class="nav__l3" href="#s20"><span class="nav__n">3-6</span><span>検索インデックス</span></a>
+<a class="nav__l3" href="#s21"><span class="nav__n">3-7</span><span>容量見積り</span></a>
+<a class="nav__l2" href="#s22"><span class="nav__n">4</span><span>Dataflow 設計</span></a>
+<a class="nav__l3" href="#s23"><span class="nav__n">4-1</span><span>全体方針</span></a>
+<a class="nav__l3" href="#s24"><span class="nav__n">4-2</span><span>Power Query の処理手順</span></a>
+<a class="nav__l3" href="#s25"><span class="nav__n">4-3</span><span>主要な M コード</span></a>
+<a class="nav__l3" href="#s26"><span class="nav__n">4-4</span><span>日付と数値の扱い</span></a>
+<a class="nav__l3" href="#s27"><span class="nav__n">4-5</span><span>Dataverse へのマッピング</span></a>
+<a class="nav__l3" href="#s28"><span class="nav__n">4-6</span><span>更新スケジュールと監視</span></a>
+<a class="nav__l2" href="#s29"><span class="nav__n">5</span><span>検索アプリ設計</span></a>
+<a class="nav__l3" href="#s30"><span class="nav__n">5-1</span><span>キャンバスアプリを使わない</span></a>
+<a class="nav__l3" href="#s31"><span class="nav__n">5-2</span><span>モデル駆動アプリ + Dataverse 検索</span></a>
+<a class="nav__l3" href="#s32"><span class="nav__n">5-3</span><span>検索の実際の操作</span></a>
+<a class="nav__l2" href="#s33"><span class="nav__n">6</span><span>メリット / デメリット</span></a>
+<a class="nav__l3" href="#s34"><span>メリット</span></a>
+<a class="nav__l3" href="#s35"><span>デメリット</span></a>
+<a class="nav__l2" href="#s36"><span class="nav__n">7</span><span>見落としやすい弱点</span></a>
+<a class="nav__l3" href="#s37"><span class="nav__n">1</span><span>ライセンスとDataverse容量を確認せずに着手すること</span></a>
+<a class="nav__l3" href="#s38"><span class="nav__n">2</span><span>キャンバスアプリで作ってしまうこと</span></a>
+<a class="nav__l3" href="#s39"><span class="nav__n">3</span><span>Dataflow の所有者を個人アカウントにすること</span></a>
+<a class="nav__l3" href="#s40"><span class="nav__n">4</span><span>タイムゾーン設定は後から変えられない</span></a>
+<a class="nav__l3" href="#s41"><span class="nav__n">5</span><span>自動型検出による取り込みの揺れ</span></a>
+<a class="nav__l3" href="#s42"><span class="nav__n">6</span><span>アーカイブ200ファイルによる更新時間</span></a>
+<a class="nav__l3" href="#s43"><span class="nav__n">7</span><span>200ファイル構造そのもの</span></a>
+<a class="nav__l2" href="#s44"><span class="nav__n">8</span><span>代替案</span></a>
+<a class="nav__l3" href="#s45"><span>代替案A — Excel + Power Query(追加費用ゼロ)</span></a>
+<a class="nav__l3" href="#s46"><span>代替案B — SharePoint リスト</span></a>
+<a class="nav__l3" href="#s47"><span>代替案C — ローカル Access</span></a>
+<a class="nav__l2" href="#s48"><span class="nav__n">9</span><span>構築手順</span></a>
+<a class="nav__l3" href="#s49"><span>Day 0 — 確認(着手前に必須)</span></a>
+<a class="nav__l3" href="#s50"><span>Day 1 — Excel 側の準備</span></a>
+<a class="nav__l3" href="#s51"><span>Day 2 — Dataverse</span></a>
+<a class="nav__l3" href="#s52"><span>Day 3 — Dataflow</span></a>
+<a class="nav__l3" href="#s53"><span>Day 4 — 検索アプリ</span></a>
+<a class="nav__l3" href="#s54"><span>Day 5 以降 — 検証</span></a>
+<a class="nav__l2" href="#s55"><span class="nav__n">10</span><span>実装チェックリスト</span></a>
+<a class="nav__l2" href="#s56"><span class="nav__n">11</span><span>初版からの変更点</span></a></nav>
   </details>
 
   <main class="doc">
@@ -280,51 +281,62 @@ table code{background:var(--surface3);font-size:12px}
               ... (200ファイル)
     master/   区分表.xlsx</code></pre></div>
 <ul><li>月次締めで <code>current/</code> のファイルを <code>archive/</code> へ移動し、新しい月のファイルを <code>current/</code> に置く</li><li>OneDrive の一時ファイル <code>~$*.xlsx</code> と競合コピー <code>*-&lt;PC名&gt;.xlsx</code> は Power Query 側で除外する</li></ul>
-<h3 id="s11"><span class="hn">2-3</span>アーカイブの集約 <span class="badge badge--checked">強く推奨</span></h3>
+<h3 id="s11"><span class="hn">2-3</span>検索に使う列【確定・11列】</h3>
+<p>59列すべてを検索対象にはしない。<strong>引合の価格判断に実際に使う11列</strong>に絞る。</p>
+<div class="tw"><table><thead><tr><th>#</th><th>Excel列名</th><th>論理名</th><th>役割</th></tr></thead><tbody><tr><td>1</td><td>受注No</td><td><code>crfff_order_no</code></td><td>キー。元ファイル照合用</td></tr><tr><td>2</td><td>手配票No</td><td><code>crfff_RNo</code></td><td>キー。元ファイル照合用</td></tr><tr><td>3</td><td>受注日</td><td><code>crfff_order_date</code></td><td>並べ替えの主軸(降順)</td></tr><tr><td>4</td><td>納期</td><td><code>crfff_delivery_date</code></td><td>参考情報</td></tr><tr><td>5</td><td>得意先コード</td><td><code>crfff_customer_code</code></td><td>絞り込み</td></tr><tr><td>6</td><td>得意先名１</td><td><code>crfff_customer_name1</code></td><td>絞り込み(部分一致)</td></tr><tr><td>7</td><td>商品コード</td><td><code>crfff_item_code</code></td><td>絞り込み(部分一致)</td></tr><tr><td>8</td><td>商品名</td><td><code>crfff_item_name</code></td><td>絞り込み(部分一致)</td></tr><tr><td>9</td><td>受注数</td><td><code>crfff_order_qty</code></td><td>参照値</td></tr><tr><td>10</td><td>単価</td><td><code>crfff_unit_price</code></td><td>参照値。見積の根拠</td></tr><tr><td>11</td><td>売単価</td><td><code>crfff_sales_unit_price</code></td><td>参照値。見積の根拠</td></tr></tbody></table></div>
+<p><strong><code>受注No</code> と <code>手配票No</code> は必ず残すこと。</strong> 「この行の全59列を見たい」となったとき、 元の Excel ファイルを引く唯一の手がかりになる。</p>
+<aside class="note"><p><strong>仕様の絞り込みは <code>商品名</code> で成立することを確認済み。</strong> <code>規格・型番</code> <code>ｻｲｽﾞ</code> <code>色</code> <code>商品項目１〜３</code> は、<code>商品名</code> に必要な情報が含まれているため除外した。</p></aside>
+<h4 id="s12">原価・粗利益を含めない【意図的】</h4>
+<p><code>原価</code> <code>粗利益</code> <code>利益率</code> は検索結果に出さない。</p>
+<p>これにより、本設計のデメリットとして挙げていた <strong>「列レベルセキュリティが無く、原価・粗利益を特定メンバーに隠せない」という問題が、 そもそも持ち込まないことで解消する。</strong> 見積の判断は <code>単価</code> <code>売単価</code> で行う。</p>
+<p>将来、原価も見たくなった場合は列を足すだけでよく、作り直しにはならない。</p>
+<h4 id="s12">適用先</h4>
+<div class="tw"><table><thead><tr><th>対象</th><th>適用</th></tr></thead><tbody><tr><td><strong>代替案A(Excel ブック)</strong></td><td>この11列だけを読み込む。100,000行 × 11列 ≒ 110万セル</td></tr><tr><td><strong>モデル駆動アプリの既定ビュー</strong></td><td>この11列を表示列にする(5-2)</td></tr><tr><td><strong>Dataverse テーブル本体</strong></td><td>59列すべてを保持する(3-3)。表示しないだけ</td></tr></tbody></table></div>
+<aside class="note"><p><strong>容量が逼迫する場合の選択肢。</strong> Dataverse テーブル自体を11列に絞ると、1行あたり約2.0〜2.5KB → <strong>約1.0〜1.2KB</strong> になり、 100,000行で <strong>200〜250MB → 100〜120MB</strong> と半減する。 per app ライセンス(+50MB/本)を選ぶ場合、この差が成否を分ける可能性がある(3-7)。 ただし「後から他の列も見たくなる」余地は失われるため、容量を実測してから判断すること。</p></aside>
+<h3 id="s12"><span class="hn">2-4</span>アーカイブの集約 <span class="badge badge--checked">強く推奨</span></h3>
 <p>200ファイルを毎回読むと、Dataflow の更新に数十分かかる。 <strong>年次12ファイル(または1ファイル)に集約</strong>すると、更新が大幅に短縮される。</p>
 <p>集約は一度きりの作業で、Power Query で結合して出力するだけ。<strong>構築の最初にやる価値がある。</strong></p>
-<h3 id="s12"><span class="hn">2-4</span>不要になったもの</h3>
+<h3 id="s13"><span class="hn">2-5</span>不要になったもの</h3>
 <div class="tw"><table><thead><tr><th>初版の要件</th><th>第2版</th></tr></thead><tbody><tr><td>全ファイルのテーブル化(<code>T_DB</code>)</td><td><strong>不要</strong>。Power Query はシートを直接読む</td></tr><tr><td><code>ensureTable()</code> による自動テーブル化</td><td><strong>不要</strong></td></tr><tr><td>Office Script(334行)</td><td><strong>不要</strong>。Power Query が同等の処理を行う</td></tr></tbody></table></div>
 <hr>
-<h2 id="s13"><span class="hn">3</span>Dataverse テーブル設計</h2>
-<h3 id="s14"><span class="hn">3-1</span>テーブル一覧</h3>
+<h2 id="s14"><span class="hn">3</span>Dataverse テーブル設計</h2>
+<h3 id="s15"><span class="hn">3-1</span>テーブル一覧</h3>
 <div class="tw"><table><thead><tr><th>テーブル</th><th>論理名</th><th>用途</th><th>想定行数</th></tr></thead><tbody><tr><td>毎月DB実績</td><td><code>crfff_jisseki</code></td><td>本体</td><td>100,000 → +6,000/年</td></tr><tr><td>区分マスタ</td><td><code>crfff_kubun</code></td><td>区分表(5行2列)</td><td>5</td></tr></tbody></table></div>
 <aside class="note"><p><code>crfff_</code> は発行者プレフィックスの仮置き。本格版 Dataverse では<strong>ソリューションの発行者を自分で定義できる</strong>ため、 <code>nlm_</code> のような意味のある接頭辞を最初に決めること。<strong>後から変更すると全列の再作成になる。</strong></p></aside>
 <p>初版にあった <code>同期制御</code> <code>同期エラー</code> テーブルは<strong>不要</strong>。 Dataflow が更新履歴とエラーを自前で保持し、失敗時はオーナーに通知される。</p>
-<h3 id="s15"><span class="hn">3-2</span>管理列</h3>
+<h3 id="s16"><span class="hn">3-2</span>管理列</h3>
 <div class="tw"><table><thead><tr><th>表示名</th><th>論理名</th><th>型</th><th>備考</th></tr></thead><tbody><tr><td>同期キー</td><td><code>crfff_sync_key</code></td><td>テキスト(100)</td><td><strong>主名前列 かつ 代替キー</strong>。Upsert の判定に使う</td></tr><tr><td>受注No</td><td><code>crfff_order_no</code></td><td>テキスト(30)</td><td>キー構成要素</td></tr><tr><td>手配票No</td><td><code>crfff_RNo</code></td><td>テキスト(30)</td><td>キー構成要素。旧「摘要」列</td></tr><tr><td>明細枝番</td><td><code>crfff_sub_no</code></td><td>整数</td><td>キー構成要素。取り込み時に採番</td></tr><tr><td>ソースファイル</td><td><code>crfff_source_file</code></td><td>テキスト(100)</td><td><code>毎月DB_2026-11.xlsx</code></td></tr></tbody></table></div>
 <p>初版にあった <code>行ハッシュ</code> <code>最終同期日時</code> は<strong>不要</strong>。差分判定は Dataflow が行う。</p>
 <aside class="note"><p><strong>論理名の大文字小文字に注意。</strong> Dataverse の論理名は<strong>常に小文字に正規化される</strong>。 スキーマ名に <code>crfff_RNo</code> と入力しても、実際の論理名は <strong><code>crfff_rno</code></strong> になる。 59列中、大文字を含むのはこの列だけ。Dataflow のマッピングで取り違えやすい。</p></aside>
-<h3 id="s16"><span class="hn">3-3</span>業務列(59列)</h3>
+<h3 id="s17"><span class="hn">3-3</span>業務列(59列)</h3>
 <div class="tw"><table><thead><tr><th>#</th><th>Excel列名</th><th>論理名</th><th>型</th><th>桁/精度</th></tr></thead><tbody><tr><td>1</td><td>ｻｲｽﾞ</td><td><code>crfff_size</code></td><td>テキスト</td><td>50</td></tr><tr><td>2</td><td>データ区分</td><td><code>crfff_data_kubun</code></td><td>テキスト</td><td>10</td></tr><tr><td>3</td><td>ﾌﾟﾛｼﾞｪｸﾄ名コード</td><td><code>crfff_project_code</code></td><td>テキスト</td><td>30</td></tr><tr><td>4</td><td>外税額</td><td><code>crfff_tax_excl_amount</code></td><td>10進数</td><td>2</td></tr><tr><td>5</td><td>規格・型番</td><td><code>crfff_spec_model</code></td><td>テキスト</td><td>100</td></tr><tr><td>6</td><td>原価</td><td><code>crfff_cost</code></td><td>10進数</td><td>2</td></tr><tr><td>7</td><td>原価税込区分</td><td><code>crfff_cost_taxincl_kubun</code></td><td>テキスト</td><td>10</td></tr><tr><td>8</td><td>原価税率</td><td><code>crfff_cost_tax_rate</code></td><td>10進数</td><td>3</td></tr><tr><td>9</td><td>受注No</td><td><code>crfff_order_no</code></td><td>テキスト</td><td>30</td></tr><tr><td>10</td><td>受注金額</td><td><code>crfff_order_amount</code></td><td>10進数</td><td>2</td></tr><tr><td>11</td><td>受注数</td><td><code>crfff_order_qty</code></td><td>10進数</td><td>3</td></tr><tr><td>12</td><td>受注日</td><td><code>crfff_order_date</code></td><td><strong>日付のみ / タイムゾーン非依存</strong></td><td>—</td></tr><tr><td>13</td><td>商品コード</td><td><code>crfff_item_code</code></td><td>テキスト</td><td>30</td></tr><tr><td>14</td><td>商品項目１</td><td><code>crfff_item_attr1</code></td><td>テキスト</td><td>50</td></tr><tr><td>15</td><td>商品項目２</td><td><code>crfff_item_attr2</code></td><td>テキスト</td><td>50</td></tr><tr><td>16</td><td>商品項目３</td><td><code>crfff_item_attr3</code></td><td>テキスト</td><td>50</td></tr><tr><td>17</td><td>商品名</td><td><code>crfff_item_name</code></td><td>テキスト</td><td>100</td></tr><tr><td>18</td><td>商品名２</td><td><code>crfff_item_name2</code></td><td>テキスト</td><td>100</td></tr><tr><td>19</td><td>色</td><td><code>crfff_color</code></td><td>テキスト</td><td>30</td></tr><tr><td>20</td><td>税込区分</td><td><code>crfff_taxincl_kubun</code></td><td>テキスト</td><td>10</td></tr><tr><td>21</td><td>税率</td><td><code>crfff_tax_rate</code></td><td>10進数</td><td>3</td></tr><tr><td>22</td><td>粗利益</td><td><code>crfff_gross_profit</code></td><td>10進数</td><td>2</td></tr><tr><td>23</td><td>単位</td><td><code>crfff_unit</code></td><td>テキスト</td><td>20</td></tr><tr><td>24</td><td>単位区分</td><td><code>crfff_unit_kubun</code></td><td>テキスト</td><td>10</td></tr><tr><td>25</td><td>単価</td><td><code>crfff_unit_price</code></td><td>10進数</td><td><strong>4</strong></td></tr><tr><td>26</td><td>担当者コード</td><td><code>crfff_staff_code</code></td><td>テキスト</td><td>20</td></tr><tr><td>27</td><td>直送先コード</td><td><code>crfff_dropship_code</code></td><td>テキスト</td><td>20</td></tr><tr><td>28</td><td>直送先名１</td><td><code>crfff_dropship_name1</code></td><td>テキスト</td><td>100</td></tr><tr><td>29</td><td>手配票No</td><td><code>crfff_RNo</code></td><td>テキスト</td><td>30</td></tr><tr><td>30</td><td>得意先コード</td><td><code>crfff_customer_code</code></td><td>テキスト</td><td>20</td></tr><tr><td>31</td><td>得意先名１</td><td><code>crfff_customer_name1</code></td><td>テキスト</td><td>100</td></tr><tr><td>32</td><td>内税額</td><td><code>crfff_tax_incl_amount</code></td><td>10進数</td><td>2</td></tr><tr><td>33</td><td>入数</td><td><code>crfff_pack_qty</code></td><td>10進数</td><td>3</td></tr><tr><td>34</td><td>納期</td><td><code>crfff_delivery_date</code></td><td><strong>日付のみ / タイムゾーン非依存</strong></td><td>—</td></tr><tr><td>35</td><td>売価金額</td><td><code>crfff_sales_amount</code></td><td>10進数</td><td>2</td></tr><tr><td>36</td><td>売上項目１</td><td><code>crfff_sales_attr1</code></td><td>テキスト</td><td>50</td></tr><tr><td>37</td><td>売上項目２</td><td><code>crfff_sales_attr2</code></td><td>テキスト</td><td>50</td></tr><tr><td>38</td><td>売上項目３</td><td><code>crfff_sales_attr3</code></td><td>テキスト</td><td>50</td></tr><tr><td>39</td><td>売単価</td><td><code>crfff_sales_unit_price</code></td><td>10進数</td><td><strong>4</strong></td></tr><tr><td>40</td><td>箱数</td><td><code>crfff_box_qty</code></td><td>10進数</td><td>3</td></tr><tr><td>41</td><td>番船</td><td><code>crfff_shipment_no</code></td><td>テキスト</td><td>30</td></tr><tr><td>42</td><td>備考</td><td><code>crfff_note</code></td><td>複数行テキスト</td><td>1000</td></tr><tr><td>43</td><td>標準価格</td><td><code>crfff_standard_price</code></td><td>10進数</td><td>2</td></tr><tr><td>44</td><td>部門コード</td><td><code>crfff_dept_code</code></td><td>テキスト</td><td>20</td></tr><tr><td>45</td><td>スポット得意先名１</td><td><code>crfff_spot_customer_name1</code></td><td>テキスト</td><td>100</td></tr><tr><td>46</td><td>スポット得意先名２</td><td><code>crfff_spot_customer_name2</code></td><td>テキスト</td><td>100</td></tr><tr><td>47</td><td>ﾌﾟﾛｼﾞｪｸﾄ名名</td><td><code>crfff_project_name</code></td><td>テキスト</td><td>100</td></tr><tr><td>48</td><td>軽減税率マーク</td><td><code>crfff_reduced_tax_mark</code></td><td>テキスト</td><td>10</td></tr><tr><td>49</td><td>見積No</td><td><code>crfff_quote_no</code></td><td>テキスト</td><td>30</td></tr><tr><td>50</td><td>原価軽減税率マーク</td><td><code>crfff_cost_reduced_tax_mark</code></td><td>テキスト</td><td>10</td></tr><tr><td>51</td><td>受注残高</td><td><code>crfff_backlog_amount</code></td><td>10進数</td><td>2</td></tr><tr><td>52</td><td>受注残数</td><td><code>crfff_backlog_qty</code></td><td>10進数</td><td>3</td></tr><tr><td>53</td><td>出荷マーク</td><td><code>crfff_ship_mark</code></td><td>テキスト</td><td>10</td></tr><tr><td>54</td><td>単位区分１受注残数</td><td><code>crfff_unit1_backlog_qty</code></td><td>10進数</td><td>3</td></tr><tr><td>55</td><td>単位区分１受注数</td><td><code>crfff_unit1_order_qty</code></td><td>10進数</td><td>3</td></tr><tr><td>56</td><td>単位区分１単位</td><td><code>crfff_unit1_unit</code></td><td>テキスト</td><td>20</td></tr><tr><td>57</td><td>直送先名２</td><td><code>crfff_dropship_name2</code></td><td>テキスト</td><td>100</td></tr><tr><td>58</td><td>得意先名２</td><td><code>crfff_customer_name2</code></td><td>テキスト</td><td>100</td></tr><tr><td>59</td><td>利益率</td><td><code>crfff_profit_rate</code></td><td>10進数</td><td>3</td></tr></tbody></table></div>
-<h3 id="s17"><span class="hn">3-4</span>区分列はルックアップではなくテキストにする <span class="badge badge--checked">第2版で変更</span></h3>
+<h3 id="s18"><span class="hn">3-4</span>区分列はルックアップではなくテキストにする <span class="badge badge--checked">第2版で変更</span></h3>
 <p>初版では区分列7本を<strong>区分マスタへのルックアップ</strong>にしていた。第2版では<strong>テキスト列</strong>に変更する。</p>
 <div class="tw"><table><thead><tr><th></th><th>ルックアップ(初版)</th><th><strong>テキスト(第2版)</strong></th></tr></thead><tbody><tr><td>Dataflow でのマッピング</td><td>代替キーによる解決が必要。設定が煩雑</td><td><strong>単純な値のコピー</strong></td></tr><tr><td>コードがマスタに無い場合</td><td><strong>行の作成が失敗する</strong></td><td>取り込まれる</td></tr><tr><td>検索</td><td>間接参照になり扱いにくい</td><td><strong>そのまま検索対象になる</strong></td></tr><tr><td>参照整合性</td><td>効く</td><td>効かない</td></tr></tbody></table></div>
 <p><strong>用途が検索である以上、参照整合性より取り込みの確実性と検索のしやすさを優先する。</strong> 区分名を表示したい場合は、区分マスタを別テーブルとして残し、モデル駆動アプリ側で参照する。</p>
 <p>初版で懸念した「区分コードが空だと404で行の作成が失敗する」問題も、テキスト化により消滅する。</p>
 <aside class="note"><p>将来、区分による絞り込みドロップダウンや参照整合性が必要になった時点でルックアップ化できる。 列の型変更は再作成を伴うが、検索用途で先にルックアップを作る理由は無い。</p></aside>
-<h3 id="s18"><span class="hn">3-5</span>型選択の根拠 <span class="badge badge--critical">間違えると後戻りできない</span></h3>
+<h3 id="s19"><span class="hn">3-5</span>型選択の根拠 <span class="badge badge--critical">間違えると後戻りできない</span></h3>
 <div class="tw"><table><thead><tr><th>項目</th><th>正解</th><th>間違えるとどうなるか</th></tr></thead><tbody><tr><td><code>受注日</code> <code>納期</code></td><td><strong>日付のみ / タイムゾーン非依存</strong></td><td>UTC保存により JST で1日ズレる。<strong>後から変更不可。テーブル作り直し</strong></td></tr><tr><td>金額列</td><td><strong>10進数</strong>(通貨型を使わない)</td><td><code>_base</code> 列が自動生成され、列数と容量が実質2倍になる</td></tr><tr><td>監査(Auditing)</td><td><strong>OFF</strong></td><td>更新のたびに監査ログが増え、本体データを上回る</td></tr><tr><td>コード列</td><td><strong>テキスト</strong>(数値にしない)</td><td>先行ゼロが落ちてキーが壊れる</td></tr></tbody></table></div>
-<h3 id="s19"><span class="hn">3-6</span>検索インデックス <span class="badge badge--checked">第2版で追加・必須</span></h3>
+<h3 id="s20"><span class="hn">3-6</span>検索インデックス <span class="badge badge--checked">第2版で追加・必須</span></h3>
 <p><strong>検索対象列には必ずインデックスを設定する。</strong> 10万行の検索性能に直結する。</p>
 <div class="code"><pre><code>crfff_item_code       商品コード
-crfff_spec_model      規格・型番
 crfff_item_name       商品名
 crfff_customer_code   得意先コード
 crfff_customer_name1  得意先名１
 crfff_order_date      受注日（並べ替え用）
 crfff_source_file     ソースファイル</code></pre></div>
-<h3 id="s20"><span class="hn">3-7</span>容量見積り</h3>
+<h3 id="s21"><span class="hn">3-7</span>容量見積り</h3>
 <div class="tw"><table><thead><tr><th>内訳</th><th>1行あたり</th></tr></thead><tbody><tr><td>テキスト列 42本 × 平均12文字 × 2byte</td><td>約 1,000 B</td></tr><tr><td>数値・日付列 17本 × 8byte</td><td>約 136 B</td></tr><tr><td>Dataverse システム列オーバーヘッド</td><td>約 800〜1,000 B</td></tr><tr><td><strong>計</strong></td><td><strong>約 2.0〜2.5 KB</strong></td></tr></tbody></table></div>
 <ul><li>100,000行 → <strong>200〜250 MB</strong></li><li>年間増加 6,000行 → <strong>約 15 MB/年</strong></li></ul>
 <p>容量はテナント単位のプール。付与元は以下。</p>
 <div class="tw"><table><thead><tr><th>付与元</th><th>Dataverse Database 容量</th></tr></thead><tbody><tr><td>テナント既定容量(最初の Power Apps / Power Automate ライセンス購入時)</td><td>一般に 10 GB</td></tr><tr><td>Power Apps Premium 1ライセンスあたり</td><td>+ 250 MB</td></tr><tr><td><strong>Power Apps per app 1ライセンスあたり</strong></td><td><strong>+ 50 MB</strong></td></tr></tbody></table></div>
 <aside class="note"><p><strong>per app を選ぶ場合は要注意。</strong> 3ライセンスでも +150MB しか増えず、本設計の消費(200〜250MB)に届かない。 <strong>テナント既定容量が使える前提かどうかを、着手前に Power Platform 管理センターで必ず確認すること</strong>(0-5 の #2)。</p></aside>
 <hr>
-<h2 id="s21"><span class="hn">4</span>Dataflow 設計</h2>
-<h3 id="s22"><span class="hn">4-1</span>全体方針</h3>
+<h2 id="s22"><span class="hn">4</span>Dataflow 設計</h2>
+<h3 id="s23"><span class="hn">4-1</span>全体方針</h3>
 <div class="tw"><table><thead><tr><th>項目</th><th>設定</th></tr></thead><tbody><tr><td>種類</td><td>標準データフロー(Dataverse にデータを格納)</td></tr><tr><td>ソース</td><td>SharePoint フォルダー(<code>/毎月DB/</code>)</td></tr><tr><td>対象テーブル</td><td><code>crfff_jisseki</code>(既存テーブルに読み込む)</td></tr><tr><td>キー</td><td><strong>代替キー <code>crfff_sync_key</code></strong> による Upsert</td></tr><tr><td>削除</td><td><strong>「クエリ出力に存在しない行を削除する」を有効化</strong></td></tr><tr><td>更新スケジュール</td><td><strong>毎日 02:00</strong>(1日1回)</td></tr><tr><td>所有者</td><td>専用アカウント(Power Apps ライセンス付き)</td></tr></tbody></table></div>
-<h3 id="s23"><span class="hn">4-2</span>Power Query の処理手順</h3>
+<h3 id="s24"><span class="hn">4-2</span>Power Query の処理手順</h3>
 <div class="code"><pre><code>1. SharePoint フォルダーに接続（サイトURL を指定）
 2. 一時ファイル・競合コピーを除外
 3. Excel ブックを展開し、ワークシートを取得
@@ -334,22 +346,22 @@ crfff_source_file     ソースファイル</code></pre></div>
 7. 受注No + 手配票No ごとに出現順で sub_no を採番
 8. sync_key を生成
 9. Dataverse にマッピングして読み込む</code></pre></div>
-<h3 id="s24"><span class="hn">4-3</span>主要な M コード</h3>
-<h4 id="s25">ファイルの絞り込み</h4>
+<h3 id="s25"><span class="hn">4-3</span>主要な M コード</h3>
+<h4 id="s26">ファイルの絞り込み</h4>
 <div class="code"><pre><code>// OneDrive の一時ファイルと競合コピーを除外する
 FilteredFiles = Table.SelectRows(Source, each
     not Text.StartsWith([Name], "~$")
     and Text.EndsWith([Name], ".xlsx")
     and not Text.Contains([Name], "-DESKTOP-")
 )</code></pre></div>
-<h4 id="s25">ワークシートの展開</h4>
+<h4 id="s26">ワークシートの展開</h4>
 <div class="code"><pre><code>// テーブル(ListObject)ではなくワークシートを直接読む
 Workbooks   = Table.AddColumn(FilteredFiles, "Data", each Excel.Workbook([Content])),
 Expanded    = Table.ExpandTableColumn(Workbooks, "Data", {"Name","Kind","Data"},
                                       {"SheetName","Kind","SheetData"}),
 SheetsOnly  = Table.SelectRows(Expanded, each [Kind] = "Sheet"),</code></pre></div>
 <aside class="note"><p><strong><code>Kind = "Sheet"</code> が重要。</strong> 初版の <code>Kind = "Table"</code> だと、 テーブル化していないファイルが読み飛ばされる。</p></aside>
-<h4 id="s25">sub_no の採番（受注No + 手配票No 単位の出現順）</h4>
+<h4 id="s26">sub_no の採番（受注No + 手配票No 単位の出現順）</h4>
 <div class="code"><pre><code>// Table.Group はグループ内の元の行順を保持するため、
 // インデックスがそのまま「出現順」になる
 Grouped = Table.Group(
@@ -363,7 +375,7 @@ ExpandedSubNo = Table.ExpandTableColumn(
     List.RemoveItems(Table.ColumnNames(Typed), {"crfff_order_no", "crfff_RNo"})
         &amp; {"crfff_sub_no"}
 ),</code></pre></div>
-<h4 id="s25">sync_key の生成</h4>
+<h4 id="s26">sync_key の生成</h4>
 <div class="code"><pre><code>// 3要素を区切り無しで連結する  例: 13524 + R08-0234 + 01 → 13524R08-023401
 AddedSyncKey = Table.AddColumn(ExpandedSubNo, "crfff_sync_key",
     each [crfff_order_no]
@@ -371,7 +383,7 @@ AddedSyncKey = Table.AddColumn(ExpandedSubNo, "crfff_sync_key",
        &amp; Text.PadStart(Text.From([crfff_sub_no]), 2, "0"),
     type text
 ),</code></pre></div>
-<h4 id="s25">キー欠損の検出（取り込みを止める）</h4>
+<h4 id="s26">キー欠損の検出（取り込みを止める）</h4>
 <div class="code"><pre><code>// キーが空の行があれば、その場で更新を失敗させる。
 // 静かに取り込んで後から気づく事態を防ぐ。
 Validated = Table.AddColumn(AddedSyncKey, "_check", each
@@ -382,7 +394,7 @@ Validated = Table.AddColumn(AddedSyncKey, "_check", each
     else true),
 
 Cleaned = Table.RemoveColumns(Validated, {"_check"}),</code></pre></div>
-<h4 id="s25">同期キーの重複検出</h4>
+<h4 id="s26">同期キーの重複検出</h4>
 <div class="code"><pre><code>// 受注No と 手配票No を区切り無しで連結しているため、
 // 桁数の組み合わせによっては別の行と同じ文字列になりうる。
 // 代替キーの一意制約でも検知されるが、ここで止めたほうが原因が分かりやすい。
@@ -390,14 +402,14 @@ DupCheck = if Table.RowCount(Table.Distinct(Cleaned, {"crfff_sync_key"}))
             &lt;&gt; Table.RowCount(Cleaned)
            then error "同期キーが重複しています"
            else Cleaned,</code></pre></div>
-<h3 id="s25"><span class="hn">4-4</span>日付と数値の扱い</h3>
+<h3 id="s26"><span class="hn">4-4</span>日付と数値の扱い</h3>
 <div class="tw"><table><thead><tr><th>列</th><th>変換</th><th>注意</th></tr></thead><tbody><tr><td><code>受注日</code> <code>納期</code></td><td><strong>Date 型</strong>(DateTime ではない)</td><td>DateTime にすると Dataverse 側でタイムゾーン変換が入りズレる</td></tr><tr><td>金額・数量列</td><td>Decimal 型</td><td>—</td></tr><tr><td>コード列</td><td><strong>Text 型を明示</strong></td><td>自動型検出に任せると先行ゼロが落ちる</td></tr></tbody></table></div>
 <aside class="note"><p><strong>Power Query の自動型検出は無効にすること。</strong> <code>オプション</code> → <code>現在のブック</code> → <code>データの読み込み</code> → 「列タイプを自動検出しない」。 有効のままだと、ファイルによって型が揺れて取り込みが失敗する。</p></aside>
-<h3 id="s26"><span class="hn">4-5</span>Dataverse へのマッピング</h3>
+<h3 id="s27"><span class="hn">4-5</span>Dataverse へのマッピング</h3>
 <p>読み込み先の設定画面で以下を指定する。</p>
 <div class="tw"><table><thead><tr><th>設定</th><th>値</th></tr></thead><tbody><tr><td>読み込み設定</td><td><strong>既存のテーブルに読み込む</strong></td></tr><tr><td>対象テーブル</td><td><code>crfff_jisseki</code></td></tr><tr><td>代替キー</td><td><strong><code>crfff_sync_key</code></strong></td></tr><tr><td>列マッピング</td><td>論理名どおり1対1(手順5で改名済みのため自動一致する)</td></tr><tr><td>「クエリ出力に存在しない行を削除する」</td><td><strong>有効</strong></td></tr></tbody></table></div>
 <aside class="note"><p><strong>削除検出は更新時間を延ばす。</strong> 毎回10万行の突合が発生するため。 アーカイブを集約(2-3)しておくと体感が大きく変わる。</p></aside>
-<h3 id="s27"><span class="hn">4-6</span>更新スケジュールと監視</h3>
+<h3 id="s28"><span class="hn">4-6</span>更新スケジュールと監視</h3>
 <div class="code"><pre><code>毎日 02:00 に自動更新</code></pre></div>
 <p>更新に失敗すると、<strong>Dataflow の所有者にメール通知</strong>が届く。 初版で設計した同期エラーテーブルと Teams 通知フローは不要。</p>
 <p>月次の運用は次の2つだけ。</p>
@@ -405,67 +417,67 @@ DupCheck = if Table.RowCount(Table.Distinct(Cleaned, {"crfff_sync_key"}))
 2. 新しい月のファイルを current/ に配置</code></pre></div>
 <p>ファイル名規約(2-2)に従っていれば、Dataflow 側の設定変更は不要。</p>
 <hr>
-<h2 id="s28"><span class="hn">5</span>検索アプリ設計</h2>
-<h3 id="s29"><span class="hn">5-1</span>キャンバスアプリを使わない <span class="badge badge--critical">最重要</span></h3>
+<h2 id="s29"><span class="hn">5</span>検索アプリ設計</h2>
+<h3 id="s30"><span class="hn">5-1</span>キャンバスアプリを使わない <span class="badge badge--critical">最重要</span></h3>
 <p><strong>Power Apps のキャンバスアプリでは、10万行の部分一致検索ができない。</strong></p>
 <p>キャンバスアプリには<strong>委任(delegation)</strong> の仕組みがあり、サーバー側で処理できないクエリは <strong>先頭500件(設定で最大2,000件)しか取得しない</strong>。</p>
 <div class="tw"><table><thead><tr><th>関数</th><th>Dataverse に対して委任されるか</th></tr></thead><tbody><tr><td><code>StartsWith</code> / <code>EndsWith</code></td><td>される</td></tr><tr><td><strong><code>Contains</code>(部分一致)</strong></td><td><strong>されない</strong></td></tr><tr><td><strong><code>Search()</code></strong></td><td><strong>されない</strong></td></tr></tbody></table></div>
 <aside class="note"><p>上限を 2,000 に引き上げても、<strong>非委任のクエリがテーブル全体を検索するようにはならない</strong>。 ローカルで処理できる件数が増えるだけ。</p></aside>
-<p>引合検索では <code>規格・型番</code> が「ボールバルブ SUS304 20A」のような形になるため、 前方一致では実用にならず、<strong>部分一致が必須</strong>。したがってキャンバスアプリは要件を満たさない。</p>
-<h3 id="s30"><span class="hn">5-2</span>モデル駆動アプリ + Dataverse 検索</h3>
+<p>引合検索では <code>商品名</code> が「ボールバルブ SUS304 20A」のような形になるため、 <strong>前方一致では実用にならない</strong>。「ボールバルブ」で始まる行を全部出しても絞り込めず、 探したいのは「SUS304 を含む」行である。<strong>部分一致が必須</strong>であり、キャンバスアプリは要件を満たさない。</p>
+<h3 id="s31"><span class="hn">5-2</span>モデル駆動アプリ + Dataverse 検索</h3>
 <p>モデル駆動アプリのビューは FetchXML で動くため、<strong>委任制限が無く全行が対象になる</strong>。</p>
-<h4 id="s31">構築手順</h4>
+<h4 id="s32">構築手順</h4>
 <div class="code"><pre><code>1. Power Platform 管理センターで Dataverse 検索を有効化
      環境 → 設定 → 製品 → 機能 → Dataverse search → オン
 
 2. 検索対象列を「クイック検索ビュー」に登録
-     商品コード / 規格・型番 / 商品名 / 得意先名１ / 得意先コード
+     商品コード / 商品名 / 得意先名１ / 得意先コード
 
-3. 既定のビューを作成
-     列: 受注日 / 得意先名１ / 商品コード / 商品名 / 規格・型番 / ｻｲｽﾞ /
-         受注数 / 単価 / 売単価 / 原価 / 粗利益 / 納期 / 受注No / 手配票No
+3. 既定のビューを作成（2-3 の11列）
+     列: 受注日 / 納期 / 得意先コード / 得意先名１ / 商品コード / 商品名 /
+         受注数 / 単価 / 売単価 / 受注No / 手配票No
      並べ替え: 受注日 降順
 
 4. モデル駆動アプリを新規作成し、毎月DB実績テーブルを追加
 
 5. 1〜3人に共有（各自に Power Apps ライセンスが必要）</code></pre></div>
 <p><strong>コードは1行も書かない。半日程度の設定作業で完成する。</strong></p>
-<h4 id="s31">Dataverse 検索の利点</h4>
+<h4 id="s32">Dataverse 検索の利点</h4>
 <div class="tw"><table><thead><tr><th></th><th>Excel のテキストフィルター</th><th><strong>Dataverse 検索</strong></th></tr></thead><tbody><tr><td>全行の部分一致</td><td>できる</td><td>できる</td></tr><tr><td><strong>複数列を横断して一度に検索</strong></td><td>できない(列ごとに指定)</td><td><strong>できる</strong></td></tr><tr><td><strong>表記ゆれ・語の分割</strong></td><td>できない</td><td><strong>できる</strong>(全文検索エンジン)</td></tr><tr><td>検索速度(10万行)</td><td>数秒</td><td>瞬時</td></tr><tr><td>モバイル</td><td>不可</td><td>可</td></tr></tbody></table></div>
-<p>「商品コードでも規格でも商品名でも、どこかに SUS304 が入っていれば拾いたい」 という検索ができる点が、Excel に対する明確な優位性になる。</p>
-<h3 id="s31"><span class="hn">5-3</span>検索の実際の操作</h3>
+<p>「商品コードでも商品名でも、どこかに SUS304 が入っていれば拾いたい」 という検索ができる点が、Excel に対する明確な優位性になる。 Excel では列を1つずつ指定して絞り込む必要がある。</p>
+<h3 id="s32"><span class="hn">5-3</span>検索の実際の操作</h3>
 <p>引合「SUS304 20A ボールバルブ / ABC商事」が来た場合。</p>
 <div class="code"><pre><code>1. アプリ上部の検索ボックスに "SUS304" と入力
-     → 商品コード・規格・型番・商品名を横断して該当行が出る
+     → 商品コード・商品名を横断して該当行が出る
 2. ビューの列フィルターで 得意先名１ を "ABC" で絞る
 3. 受注日 降順で並んでいるため、直近の実績が最上段に出る
 4. 単価 / 売単価 / 原価 / 粗利益 を確認して見積に使う</code></pre></div>
 <hr>
-<h2 id="s32"><span class="hn">6</span>メリット / デメリット</h2>
-<h3 id="s33">メリット</h3>
+<h2 id="s33"><span class="hn">6</span>メリット / デメリット</h2>
+<h3 id="s34">メリット</h3>
 <ol><li><strong>実装量が初版の3分の1以下</strong>。Office Script も Power Automate フローも不要</li><li><strong>Power Automate Premium が不要</strong>になった(0-3)</li><li><strong>全行を対象とした横断的な全文検索</strong>ができる(5-2)</li><li><strong>コードを書かない</strong>。Power Query の設定とモデル駆動アプリの構成のみ</li><li>更新失敗が<strong>自動でメール通知</strong>される。独自の通知フローが不要</li><li>Excel 側の改修が<strong>書式変更だけ</strong>になった(2-1)</li><li>将来モバイル対応・アプリ拡張ができる</li></ol>
-<h3 id="s34">デメリット</h3>
+<h3 id="s35">デメリット</h3>
 <ol><li><strong>Power Apps のライセンス費用が発生する</strong>。3人で月 $15〜$60</li><li><strong>容量がテナント共有プールになる</strong>。他部署と食い合う</li><li><strong>運用知識が必要</strong>。Power Platform 管理センター、ソリューション、環境管理</li><li><strong>Dataflow の所有者が単一障害点</strong>。所有者の退職・異動で更新が止まる</li><li><strong>更新は日次</strong>。当日の修正は翌日まで反映されない(用途上は許容)</li><li><strong>障害の切り分けが4層</strong>(Excel / OneDrive / SharePoint / Dataflow / Dataverse)にまたがる</li></ol>
 <hr>
-<h2 id="s35"><span class="hn">7</span>見落としやすい弱点</h2>
+<h2 id="s36"><span class="hn">7</span>見落としやすい弱点</h2>
 <p>重要度順。</p>
-<h3 id="s36"><span class="hn">1</span>ライセンスとDataverse容量を確認せずに着手すること</h3>
+<h3 id="s37"><span class="hn">1</span>ライセンスとDataverse容量を確認せずに着手すること</h3>
 <p>per app が購入できるかで<strong>年 $540</strong>、テナント既定容量が使えるかで<strong>設計の可否</strong>が変わる(0-5)。 テーブルを作る前に両方を確認すること。</p>
-<h3 id="s37"><span class="hn">2</span>キャンバスアプリで作ってしまうこと</h3>
+<h3 id="s38"><span class="hn">2</span>キャンバスアプリで作ってしまうこと</h3>
 <p>最も踏みやすい地雷。Power Apps の既定の作り方がキャンバスアプリであるため、 何も考えずに作ると<strong>先頭2,000行しか検索しないアプリ</strong>ができあがる。 しかも<strong>動いているように見える</strong>ため、気づくのが遅れる。<strong>必ずモデル駆動アプリで作ること</strong>(5-1)。</p>
-<h3 id="s38"><span class="hn">3</span>Dataflow の所有者を個人アカウントにすること</h3>
+<h3 id="s39"><span class="hn">3</span>Dataflow の所有者を個人アカウントにすること</h3>
 <p>所有者の異動・退職・パスワード変更で更新が無言で止まる。 <strong>専用アカウントを用意し、そこに Power Apps ライセンスを割り当てる</strong>こと。</p>
-<h3 id="s39"><span class="hn">4</span>タイムゾーン設定は後から変えられない</h3>
+<h3 id="s40"><span class="hn">4</span>タイムゾーン設定は後から変えられない</h3>
 <p><code>受注日</code> <code>納期</code> を「日付と時刻」型で作ると、後から「日付のみ」に変更できない。 テーブルを作り直すことになる。<strong>列を作る瞬間に決める。</strong></p>
-<h3 id="s40"><span class="hn">5</span>自動型検出による取り込みの揺れ</h3>
+<h3 id="s41"><span class="hn">5</span>自動型検出による取り込みの揺れ</h3>
 <p>Power Query の自動型検出を有効のままにすると、ファイルによって列の型が変わり、 ある月だけ取り込みが失敗する。<strong>必ず無効化し、型を明示すること</strong>(4-4)。</p>
-<h3 id="s41"><span class="hn">6</span>アーカイブ200ファイルによる更新時間</h3>
+<h3 id="s42"><span class="hn">6</span>アーカイブ200ファイルによる更新時間</h3>
 <p>削除検出と200ファイルの結合が重なると、更新が数十分になる。 <strong>年次12ファイルへの集約</strong>(2-3)を構築時にやっておくこと。</p>
-<h3 id="s42"><span class="hn">7</span>200ファイル構造そのもの</h3>
+<h3 id="s43"><span class="hn">7</span>200ファイル構造そのもの</h3>
 <p>最新月しか更新しないのに、ファイルが200個ある状態は保守負債。 集約は検索システムのためだけでなく、業務運用としても整理の価値がある。</p>
 <hr>
-<h2 id="s43"><span class="hn">8</span>代替案</h2>
-<h3 id="s44">代替案A — Excel + Power Query(追加費用ゼロ)</h3>
+<h2 id="s44"><span class="hn">8</span>代替案</h2>
+<h3 id="s45">代替案A — Excel + Power Query(追加費用ゼロ)</h3>
 <p>Dataverse を使わず、Excel のブックで完結させる。</p>
 <div class="code"><pre><code>Excel ブック
  └ Power Query で archive の200ファイルを結合
@@ -473,50 +485,50 @@ DupCheck = if Table.RowCount(Table.Distinct(Cleaned, {"crfff_sync_key"}))
        └ テキストフィルター(指定の値を含む)で検索</code></pre></div>
 <div class="tw"><table><thead><tr><th></th><th>本設計(Dataverse)</th><th><strong>代替案A(Excel)</strong></th></tr></thead><tbody><tr><td>月額</td><td>$15〜$60</td><td><strong>$0</strong></td></tr><tr><td>全行の部分一致検索</td><td>できる</td><td><strong>できる</strong>(テキストフィルター)</td></tr><tr><td>複数列の横断検索</td><td>できる</td><td><strong>できない</strong>(列ごとに指定)</td></tr><tr><td>表記ゆれ</td><td>強い</td><td>弱い</td></tr><tr><td>モバイル</td><td>可</td><td>不可</td></tr><tr><td>更新</td><td>自動(日次)</td><td><strong>デスクトップ版 Excel で手動</strong>(月1回)</td></tr><tr><td>構築時間</td><td>1〜2日</td><td><strong>半日</strong></td></tr></tbody></table></div>
 <aside class="note"><p><strong>「列を指定した部分一致で足りる」なら、代替案Aで要件を満たす。</strong> 本設計を選ぶ判断材料は、<strong>横断的な全文検索・表記ゆれ耐性・モバイル</strong>の3点に絞られる。 費用ゼロ・半日で試せるため、<strong>本設計に着手する前に代替案Aを作って検証することを推奨する。</strong> 作った Power Query は本設計の Dataflow にそのまま流用できるため、無駄にならない。</p></aside>
-<h3 id="s45">代替案B — SharePoint リスト</h3>
+<h3 id="s46">代替案B — SharePoint リスト</h3>
 <p>Dataverse ではなく SharePoint リストに取り込む。標準コネクタのみで動くため追加費用ゼロ。 ただし Dataflow は使えず Power Automate が必要になり、全文検索も Dataverse 検索ほど強くない。 <strong>本用途では代替案A のほうが素直。</strong></p>
-<h3 id="s46">代替案C — ローカル Access</h3>
+<h3 id="s47">代替案C — ローカル Access</h3>
 <p>Business Standard に Access が含まれる。10万行は瞬時。単独PCでの利用なら最速・最安。 共有・モバイルは不可。</p>
 <hr>
-<h2 id="s47"><span class="hn">9</span>構築手順</h2>
-<h3 id="s48">Day 0 — 確認(着手前に必須)</h3>
+<h2 id="s48"><span class="hn">9</span>構築手順</h2>
+<h3 id="s49">Day 0 — 確認(着手前に必須)</h3>
 <div class="code"><pre><code>1. Power Apps per app プランが購入可能か、リセラーまたは Microsoft に確認
 2. Power Platform 管理センター → リソース → 容量 で Dataverse の空きを確認
 3. 専用アカウントを用意し、Power Apps ライセンスを割り当てる
 4. Power Platform 管理センターで運用環境を作成
      （Dataverse データベースを含める / 地域 Japan / 言語 日本語）</code></pre></div>
-<h3 id="s49">Day 1 — Excel 側の準備</h3>
+<h3 id="s50">Day 1 — Excel 側の準備</h3>
 <div class="code"><pre><code>5. SharePoint に /毎月DB/current /archive /master を作成
 6. OneDrive 同期クライアントでローカルPCにマッピング
 7. コード系列の書式を「文字列」に変更（2-1）
 8. アーカイブ200ファイルを年次12ファイルに集約（2-3）</code></pre></div>
-<h3 id="s50">Day 2 — Dataverse</h3>
+<h3 id="s51">Day 2 — Dataverse</h3>
 <div class="code"><pre><code>9.  ソリューションの発行者プレフィックスを決める（後から変更不可）
 10. テーブルを作成（3-2 / 3-3）
       日付は「日付のみ / タイムゾーン非依存」
       金額は10進数、監査はOFF
 11. 代替キー crfff_sync_key を設定
 12. 検索インデックスを設定（3-6）</code></pre></div>
-<h3 id="s51">Day 3 — Dataflow</h3>
+<h3 id="s52">Day 3 — Dataflow</h3>
 <div class="code"><pre><code>13. Dataflow を作成（4章）
 14. まず 10行のテストファイル1つだけで通す
 15. 通ったらアーカイブ全体に広げる
 16. 更新スケジュールを設定（毎日 02:00）</code></pre></div>
-<h3 id="s52">Day 4 — 検索アプリ</h3>
+<h3 id="s53">Day 4 — 検索アプリ</h3>
 <div class="code"><pre><code>17. Dataverse 検索を有効化
 18. クイック検索ビューに検索対象列を登録
 19. 既定のビューを作成
 20. モデル駆動アプリを作成
 21. 実際の引合で数件検索してみる</code></pre></div>
-<h3 id="s53">Day 5 以降 — 検証</h3>
+<h3 id="s54">Day 5 以降 — 検証</h3>
 <div class="code"><pre><code>22. 1週間、Excel を正として並行運用し、件数と内容の一致を確認
 23. 欲しい列が足りなければビューに追加（やり直し不要）</code></pre></div>
 <p><strong>手順14が最も重要。</strong> 10行で通してから広げること。 10万行でいきなり試すと、1か所の型の不一致で数十分待たされる。</p>
 <hr>
-<h2 id="s54"><span class="hn">10</span>実装チェックリスト</h2>
+<h2 id="s55"><span class="hn">10</span>実装チェックリスト</h2>
 <ul class="checks"><li>Power Apps per app プランの購入可否を確認した</li><li>Dataverse の空き容量を確認した</li><li>専用アカウントに Power Apps ライセンスを割り当てた</li><li>発行者プレフィックスを決めた(後から変更不可)</li><li>日付列を「日付のみ / タイムゾーン非依存」で作成した</li><li>金額列を通貨型ではなく10進数で作成した</li><li>テーブルの監査をOFFにした</li><li>代替キー <code>crfff_sync_key</code> を設定した</li><li>検索対象列にインデックスを設定した</li><li><code>crfff_RNo</code> の論理名が <code>crfff_rno</code>(小文字)であることを確認した</li><li>コード系列(<code>受注No</code> <code>手配票No</code> 含む)がテキスト書式になっている</li><li>Power Query の自動型検出を無効にした</li><li><code>Kind = "Sheet"</code> でワークシートを読んでいる</li><li>一時ファイル <code>~$*.xlsx</code> を除外している</li><li>10行のテストファイルで Dataflow を通した</li><li>「クエリ出力に存在しない行を削除する」を有効にした</li><li>更新スケジュールを設定した</li><li>Dataverse 検索を有効化した</li><li><strong>キャンバスアプリではなくモデル駆動アプリで作った</strong></li><li>アーカイブを年次ファイルに集約した</li><li>1週間の並行運用で差分ゼロを確認した</li></ul>
 <hr>
-<h2 id="s55"><span class="hn">11</span>初版からの変更点</h2>
+<h2 id="s56"><span class="hn">11</span>初版からの変更点</h2>
 <div class="tw"><table><thead><tr><th>項目</th><th>初版</th><th><strong>第2版</strong></th></tr></thead><tbody><tr><td>基盤</td><td>Dataverse for Teams</td><td><strong>Dataverse</strong>(廃止に伴う移行)</td></tr><tr><td>用途</td><td>未定義</td><td><strong>引合検索(1〜3人)</strong></td></tr><tr><td>取り込み</td><td>Power Automate クラウドフロー</td><td><strong>Dataflow</strong></td></tr><tr><td>必要ライセンス</td><td>Power Automate Premium</td><td><strong>Power Apps</strong>(per app または Premium)</td></tr><tr><td>更新頻度</td><td>15分ポーリング</td><td><strong>日次 1回</strong></td></tr><tr><td>Office Script</td><td>必須(334行)</td><td><strong>不要</strong></td></tr><tr><td>リクエスト予算の設計</td><td>設計の中核(技法1〜4)</td><td><strong>不要</strong></td></tr><tr><td>行ハッシュによる差分判定</td><td>必須</td><td><strong>不要</strong>(Dataflow が行う)</td></tr><tr><td>初期ロード</td><td>CSV統合 + インポート(約3日)</td><td><strong>不要</strong>(同じ Dataflow が処理)</td></tr><tr><td>同期制御 / 同期エラーテーブル</td><td>必要</td><td><strong>不要</strong></td></tr><tr><td>Excel のテーブル化</td><td>全ファイル必須</td><td><strong>不要</strong>(シートを直接読む)</td></tr><tr><td>区分列</td><td>ルックアップ(7本)</td><td><strong>テキスト</strong></td></tr><tr><td>検索UI</td><td>未設計</td><td><strong>モデル駆動アプリ + Dataverse 検索</strong></td></tr></tbody></table></div>
 <p>初版の <code>sync-read-script.ts</code>(Office Script)は、 Power Automate クラウドフロー方式または SharePoint リスト方式に切り替える場合に備えて保持している。 <strong>本設計では使用しない。</strong></p>
   </main>
